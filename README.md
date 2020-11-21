@@ -26,17 +26,20 @@ Thereby offloading liability and removing the risk of a data breach.
 
 ## How does it work?
 You point your client API or Frontend to a CloudFront DNS (a reverse proxy)
-Example: 
+
+Example:
+
 BEFORE: api.yourcompany.com → [Your API Server]
+
 AFTER: api.yourcompany.com → cloudfront-reverse-proxy → [Your API Server]
 
-The inbound/reverse proxy directs traffic between the client-side (inbound) traffic, the bluebox (where sensitive data is stored), and your backend systems as illustrated by the below image.
+The inbound/reverse proxy directs traffic between the client-side (inbound) traffic, the bluebox (where sensitive data is stored),
+and your backend systems as illustrated by the below image.
 
 ![layout](https://raw.github.com/nahuelcandia/bluebox/master/docs/assets/bluebox-flow.png)
 
 ## Getting Started
 1. Clone the repository
-2. 
 
 ## Contributing
 Please see our contributing.md.
