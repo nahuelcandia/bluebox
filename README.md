@@ -72,17 +72,20 @@ serverless offline start
 - Inspector [TBD]: Automated security assessment service to help improve the security and compliance of applications deployed on AWS.
 
 ### AWS Total Cost of Ownership (TCO)
+
 This table shows how much you may spend every month when implementing all the required resources, in the us-east region.
+
 The calculation is based on the amount of requests, taking in account that storing one record may incurr in up to 4 internal requests.
 
 1 record = 4 requests
-Lambda cost per request:
-Average cost per record in DynamoDB:
-Average Network cost per request:
-Average cost per n requests in CloudWatch Logs:
-Average cost per n requests in Cloudtrail:
-Average cost Config:
-Average cost Inspector:
+
+- Lambda cost per request:
+- Average cost per record in DynamoDB:
+- Average Network cost per request:
+- Average cost per n requests in CloudWatch Logs:
+- Average cost per n requests in Cloudtrail:
+- Average cost Config:
+- Average cost Inspector:
 
 *All costs averages are on a calendar month basis.
 
@@ -97,8 +100,12 @@ Amount of Records | TCO
 500,000 | $1 
 1,000,000 | $1 
 
+## Architecture Diagram
+
+
 ## Contributing
 Please see our contributing.md.
 
 ## Authors
-Nahuel Candia (@nahuelcandia) – Rebill
+Nahuel Candia ([@nahuelcandia](https://twitter.com/dncandia)) – [Rebill, Inc.](https://www.rebill.to)
+
