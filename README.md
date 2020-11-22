@@ -65,14 +65,53 @@ serverless offline start
 - DynamoDB
 
 ## AWS Services Required
+The core AWS components used by this Quick Start include the following AWS services. (If
+you are new to AWS, see Getting Started with AWS.)
+
 - CloudFront: acts as the reverse proxy.
 - AWS Lambda: encrypts the information, saves it into DynamoDB and replaces it by aliases.
 - DynamoDB: stores the sensitive data encrypted.
-- VPC [TBD]: interconnects services and isolates them from the rest of the network.
-- Cloudwatch [TBD]: stores logs of the activity.
-- Cloudtrail [TBD]: stores logs of the activity.
-- Config [TBD]: stores logs of the configuration of your account.
 - Inspector [TBD]: Automated security assessment service to help improve the security and compliance of applications deployed on AWS.
+- AWS CloudTrail – AWS CloudTrail records AWS API calls and delivers log files that
+include caller identity, time, source IP address, request parameters, and response 
+Amazon Web Services – Standardized Architecture for PCI DSS January 2020. 
+The call history and details provided by CloudTrail enable security analysis,
+resource change tracking, and compliance auditing.
+- Amazon CloudWatch – Amazon CloudWatch is a monitoring service for AWS Cloud
+resources and the applications you run on AWS. You can use Amazon CloudWatch to
+collect and track metrics, collect and monitor log files, set alarms, and automatically
+react to changes in your AWS resources.
+- AWS Config – AWS Config is a fully managed service that provides you with an AWS
+resource inventory, configuration history, and configuration change notifications to
+enable security and governance. AWS Config rules enable you to automatically check the
+configuration of AWS resources recorded by AWS Config.
+Note The AWS Config rules feature is currently available in the AWS Regions
+listed on the endpoints and quotas webpage.
+- AWS Secrets Manager - AWS Secrets Manager is a credentials management service that
+helps you protect access to your applications, services, and IT resources. This service
+enables you to easily rotate, manage, and retrieve database credentials, API keys, and
+other secrets throughout their lifecycle. Using Secrets Manager, you can secure and
+manage secrets used to access resources in the AWS Cloud, on third-party services, and
+on-premises.
+- Amazon S3 - Amazon Simple Storage Service (Amazon S3) is an object storage service
+that offers industry-leading scalability, data availability, security, and performance.
+Customers of all sizes and industries can use Amazon S3 to store and protect any
+amount of data for a range of use cases, such as websites, mobile applications, backup
+and restore, archive, enterprise applications, IoT devices, and big data analytics.
+Amazon S3 provides easy-to-use management features so you can organize your data
+and configure finely tuned access controls to meet your specific business, organizational,
+and compliance requirements.
+- Amazon VPC – The Amazon Virtual Private Cloud (Amazon VPC) service lets you
+provision a private, logically isolated section of the AWS Cloud where you can launch
+AWS services and other resources in a virtual network that you define. You have
+complete control over your virtual networking environment, including selection of your
+own IP address range, creation of subnets, and configuration of route tables and
+network gateways.
+- AWS WAF - AWS WAF is a web application firewall that helps protect web applications
+from attacks by allowing you to configure rules that allow, block, or monitor (count) web
+requests based on conditions that you define. These conditions include IP addresses,
+HTTP headers, HTTP body, URI strings, structured query language (SQL) injection and
+cross-site scripting.
 
 ### AWS Total Cost of Ownership (TCO)
 
