@@ -1,4 +1,7 @@
 # Bluebox
+
+# NOTE: WORK IN PROGRESS - UNSTABLE
+
 Open Source PCI-Compliant Serverless Proxy and "Blackbox" that replaces sensitive information on-the-fly for inbound and outbound traffic.
 
 This standalone quickstart module aims to simplify the process of becoming PCI-DSS compliant,
