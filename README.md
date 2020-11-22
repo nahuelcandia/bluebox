@@ -1,6 +1,6 @@
 # Bluebox
 
-# NOTE: WORK IN PROGRESS - UNSTABLE
+### NOTE: WORK IN PROGRESS - UNSTABLE
 
 Open Source PCI-Compliant Serverless Proxy and "Blackbox" that replaces sensitive information on-the-fly for inbound and outbound traffic.
 
