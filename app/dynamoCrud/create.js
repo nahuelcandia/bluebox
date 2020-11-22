@@ -1,7 +1,7 @@
 'use strict';
 
 const uuid = require('uuid');
-const dynamodb = require('./dynamodb');
+const dynamodb = require('../dynamodb');
 
 module.exports.create = (event, context, callback) => {
   const timestamp = new Date().getTime();

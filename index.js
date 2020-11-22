@@ -7,7 +7,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-const PORT = process.env.PORT || 3000;
 var cors = require('cors');
 
 app.use(cors());
