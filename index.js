@@ -1,7 +1,7 @@
 const serverless = require('serverless-http');
 var express = require('express');
 require('dotenv').config();
-var inboundProxy = require('./proxy');
+var inboundProxy = require('./app/proxy');
 var app = express();
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -31,4 +31,4 @@ app.delete('*', inboundProxy.redirectRequest);
 app.patch('*', inboundProxy.redirectRequest);
 app.options('*', inboundProxy.redirectRequest);
 
-module.exports.proxy = serverless(app);
+module.exports.app = serverless(app);

@@ -48,7 +48,7 @@ provider:
 
 functions:
   blueboxInboundProxy:
-    handler: app/inbound.proxy
+    handler: index.app
     events:
       - http:
           method: '*'
