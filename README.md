@@ -14,10 +14,7 @@ and replacing any sensible data of your choice by aliases.
 Bluebox replaces sensitive data with an aliased version, which can be safely stored and used in the same
 way as the original data. 
 
-All the information is handled over PCI-Compliant services provided by the AWS infrastructure:
-- CloudFront Reverse Proxy
-- AWS Lambda
-- DynamoDB
+This solution heavily relies on the AWS managed services and its infrastructure in order to achieve compliance.
 
 Bluebox vaults the original data, encrypted, in a DynamoDB database isolated from the rest of your infrastructure.
 Thereby offloading liability and removing the risk of a data breach.
