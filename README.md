@@ -59,11 +59,13 @@ Run service offline
 serverless offline start
 ```
 
-## Contributing
-Please see our contributing.md.
+## Technologies Used
+- Node.JS
+- Serverless Framework
+- DynamoDB
 
 ## AWS Services Required
-- CloudFront: acts as the reverse proxy
+- CloudFront: acts as the reverse proxy.
 - AWS Lambda: encrypts the information, saves it into DynamoDB and replaces it by aliases.
 - DynamoDB: stores the sensitive data encrypted.
 - VPC [TBD]: interconnects services and isolates them from the rest of the network.
@@ -76,6 +78,9 @@ Please see our contributing.md.
 This table shows how much you may spend every month when implementing all the required resources, in the us-east region.
 The calculation is based on the amount of requests, taking in account that storing one record may incurr in up to 4 internal requests.
 1 record = 4 requests
+
+## Contributing
+Please see our contributing.md.
 
 ## Authors
 Nahuel Candia (@nahuelcandia) – Rebill
