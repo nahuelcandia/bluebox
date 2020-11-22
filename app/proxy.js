@@ -7,7 +7,8 @@ exports.redirectRequest = async function (req, res) {
     // When access is granted to the Bluebox, it automatically acts as a Decoder of the sensible data.
     // The request will be forwarded to the url defined in the header X-Bluebox-Forward-To
     // Otherwise, it will act as an encoder; the sensible data will be catched and replaced by aliases, and then
-    // forwarded to the URL defined in the process.env.PROXY_TARGET
+    // forwarded to the URL defined in the process.env.PROXY_TARGET adding the same path.
+    // On both cases the method used is the same of the original request.
 
     let proxyTarget = process.env.PROXY_TARGET + req.path;
     
