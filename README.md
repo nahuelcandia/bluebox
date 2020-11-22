@@ -39,7 +39,19 @@ and your backend systems as illustrated by the below image.
 ![layout](https://raw.github.com/nahuelcandia/bluebox/master/docs/assets/bluebox-flow.png)
 
 ## Getting Started
-1. Clone the repository
+
+```bash
+npm install
+serverless dynamodb install
+serverless offline start
+serverless dynamodb migrate (this imports schema)
+```
+
+Run service offline
+
+```bash
+serverless offline start
+```
 
 ## Contributing
 Please see our contributing.md.

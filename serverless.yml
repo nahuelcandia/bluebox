@@ -1,0 +1,76 @@
+service:
+  name: bluebox
+
+custom:
+  vpc:
+    staging:
+      securityGroupIds: []
+      subnetIds: []
+    production:
+      securityGroupIds: []
+      subnetIds: []
+  region:
+    staging: us-east-1
+    production: us-east-1
+  dynamodb:
+    stages:
+      - staging
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    migration:
+      dir: offline/migrations
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'staging'}
+  region: ${self:custom.region.${opt:stage, self:provider.stage}}
+  runtime: nodejs12.x
+  timeout: 60
+  #vpc: ${self:custom.vpc.${opt:stage, self:provider.stage}}
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  blueboxInboundProxy:
+    handler: app/inbound.proxy
+    events:
+      - httpApi: '*'
+        cors: true
+  blueboxOutboundProxy:
+    handler: app/outbound.proxy
+    events:
+      - httpApi: '*'
+        cors: true
+
+resources:
+  Resources:
+    BlueboxDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: alias
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: alias
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}

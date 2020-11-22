@@ -1,0 +1,26 @@
+{
+    "name": "bluebox",
+    "version": "1.0.0",
+    "description": "PCI-Compliant Serverless Reverse Proxy and Blackbox that replaces sensitive information on-the-fly for inbound and outbound traffic.",
+    "repository": "",
+    "author": "Nahuel Candia <nahuelcandia@gmail.com>",
+    "license": "MIT",
+    "main": "bluebox.handler.js",
+    "scripts": {
+        "deploy": "serverless deploy -s ${ENVIRONMENT}",
+        "test": "npx jest --config jest.config.json"
+    },
+    "dependencies": {
+        "aws-sdk": "^2.73.0",
+        "axios": "^0.19.2",
+        "bcrypt": "^5.0.0",
+        "moment": "^2.24.0",
+        "uuid": "^2.0.3"
+    },
+    "devDependencies": {
+        "lerna": "^3.20.2",
+        "serverless": "^1.67.3",
+        "serverless-offline": "^6.1.4",
+        "serverless-dynamodb-local": "^0.2.18"
+    }
+}

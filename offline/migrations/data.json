@@ -1,0 +1,21 @@
+{
+    "Table": {
+        "TableName": "sensitiveData",
+        "KeySchema": [
+            {
+                "AttributeName": "alias",
+                "KeyType": "HASH"
+            }
+        ],
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "alias",
+                "AttributeType": "S"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    }
+}
