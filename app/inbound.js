@@ -1,43 +1,34 @@
-'use strict';
+const serverless = require('serverless-http');
+var express = require('express');
+require('dotenv').config();
+var inboundProxy = require('./proxy');
+var app = express();
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+const PORT = process.env.PORT || 3000;
+var cors = require('cors');
 
-module.exports.proxy = async event => {
-  /*
-    1. Replace sensitive data for an alias.
-    1.1 Get from DB sensitive data to replace (attribute name) and REGEX of what should be replaced
-    replacements: [{
-      rule_id
-      attributeName: ex. 'card_number' is the attribute to be searched for.
-      present_in: ['body', 'headers', 'querystring'] - where should we look to replace this attribute?
-      regex: if null, everything will be replaced, otherwise a rule will be applied
-      delete_after: [time in seconds] - if null is never deleted, otherwise it will be deleted after the indicated time
-      updatedAt
-      createdAt
-    }]
-    data: [
-      {
-        rule_id: the id of the rule applied, in order to 
-        raw: { ..yourstuff },
-        alias: random and unique generated alias.
-        expiration:
-        updatedAt
-        createdAt
-      }
-    ]
-    2. Save the data in DynamoDB.
-    3. Forward the request to the endpoint and await response.
-    4. Forward the response back to the customer.
-  */
- 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
-  
-};
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('dev'));
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"); 
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  next();
+});
+
+// Intercept all requests
+app.get('*', inboundProxy.redirectRequest);
+app.put('*', inboundProxy.redirectRequest);
+app.post('*', inboundProxy.redirectRequest);
+app.delete('*', inboundProxy.redirectRequest);
+app.patch('*', inboundProxy.redirectRequest);
+app.options('*', inboundProxy.redirectRequest);
+
+module.exports.proxy = serverless(app);

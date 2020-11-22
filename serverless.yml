@@ -50,13 +50,10 @@ functions:
   blueboxInboundProxy:
     handler: app/inbound.proxy
     events:
-      - httpApi: '*'
-        cors: true
-  blueboxOutboundProxy:
-    handler: app/outbound.proxy
-    events:
-      - httpApi: '*'
-        cors: true
+      - http:
+          method: '*'
+          path: '/{any+}' # Catch all unknown routes and redirect to main handler
+          cors: true
 
 resources:
   Resources:

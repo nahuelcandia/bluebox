@@ -129,7 +129,7 @@ The calculation is based on the amount of requests, taking in account that stori
 - Average cost Config:
 - Average cost Inspector:
 
-*All costs averages are on a calendar month basis.
+*All costs averages are on a calendar month basis, expressed in US Dollars.
 
 Amount of Records | TCO 
 --- | --- 

@@ -14,13 +14,21 @@
         "aws-sdk": "^2.73.0",
         "axios": "^0.19.2",
         "bcrypt": "^5.0.0",
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.5",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
         "moment": "^2.24.0",
+        "morgan": "^1.10.0",
+        "request-promise": "^4.2.6",
+        "serverless-http": "^2.6.0",
         "uuid": "^2.0.3"
     },
     "devDependencies": {
         "lerna": "^3.20.2",
         "serverless": "^1.67.3",
-        "serverless-offline": "^6.1.4",
-        "serverless-dynamodb-local": "^0.2.18"
+        "serverless-dynamodb-local": "^0.2.18",
+        "serverless-offline": "^6.1.4"
     }
 }
