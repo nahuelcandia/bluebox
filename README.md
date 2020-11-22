@@ -74,7 +74,28 @@ serverless offline start
 ### AWS Total Cost of Ownership (TCO)
 This table shows how much you may spend every month when implementing all the required resources, in the us-east region.
 The calculation is based on the amount of requests, taking in account that storing one record may incurr in up to 4 internal requests.
+
 1 record = 4 requests
+Lambda cost per request:
+Average cost per record in DynamoDB:
+Average Network cost per request:
+Average cost per n requests in CloudWatch Logs:
+Average cost per n requests in Cloudtrail:
+Average cost Config:
+Average cost Inspector:
+
+*All costs averages are on a calendar month basis.
+
+Amount of Records | TCO 
+--- | --- 
+100 | $1 
+1,000 | $1 
+5,000 | $1 
+10,000 | $1 
+50,000 | $1 
+100,000 | $1 
+500,000 | $1 
+1,000,000 | $1 
 
 ## Contributing
 Please see our contributing.md.
