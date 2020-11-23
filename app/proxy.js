@@ -14,8 +14,7 @@ exports.redirectRequest = async function (req, res) {
     
     //Detect if should act as reverse proxy, and decrypt data and forward to a 3rd party.
     if(typeof req['headers']['x-bluebox-authorization'] !== 'undefined' && req['headers']['x-bluebox-authorization'] != null) {
-      let isDecodeMode = false;
-      isDecodeMode = await authorizer.authorizeAccess(req['headers']['x-bluebox-authorization']);
+      let isDecodeMode = await authorizer.authorizeAccess(req['headers']['x-bluebox-authorization']);
       if(isDecodeMode) {
         await getHeaderProxyTarget(req.headers).then(response => {
           proxyTarget = response;
@@ -31,7 +30,7 @@ exports.redirectRequest = async function (req, res) {
         res.status(401).send({"message": "Bluebox access denied."})
       }
     } else {
-      await forwardRequest(req, proxyTarget, isDecodeMode).then(response => {
+      await forwardRequest(req, proxyTarget, false).then(response => {
         res.send(response);
       }).catch(error => {
         res.send(error);
@@ -52,7 +51,7 @@ function isEmpty(obj) {
   }
 }
 
-function urlParamsFiller(string, params)  {
+async function urlParamsFiller(string, params)  {
   for (const param of Object.keys(params)) {
     string = string.replace(`:${param}`, params[param]);
   }
@@ -86,7 +85,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
   
     //Intercept and forward the path parameters
     if(typeof req.params !== 'undefined' && req.params != null && isEmpty(req.params) == false){
-      options['url'] = urlParamsFiller(options['url'], req.params);
+      options['url'] = await urlParamsFiller(options['url'], req.params);
     }
   
     //Intercept and forward the request body
@@ -99,7 +98,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
     } else {
       options = await bluebox.encodeSensibleData(options);
     }
-    
+    console.log(options)
     rp(options)
     .then(response => {
       resolve(response);

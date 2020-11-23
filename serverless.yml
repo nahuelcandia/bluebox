@@ -79,6 +79,10 @@ functions:
     events:
       - http:
           method: 'any'
+          path: '/' # Catch all unknown routes and redirect to main handler
+          cors: true
+      - http:
+          method: 'any'
           path: '/{any+}' # Catch all unknown routes and redirect to main handler
           cors: true
       
