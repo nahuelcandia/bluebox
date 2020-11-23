@@ -10,13 +10,14 @@ exports.redirectRequest = async function (req, res) {
     // forwarded to the URL defined in the process.env.PROXY_TARGET adding the same path.
     // On both cases the method used is the same of the original request.
 
-    let proxyTarget = process.env.PROXY_TARGET + req.path;
+    let proxyTarget = process.env.PROXY_TARGET;
+    proxyTarget += (req.path)? req.path.substring(1) : null;
     
     //Detect if should act as reverse proxy, and decrypt data and forward to a 3rd party.
     if(typeof req['headers']['x-bluebox-authorization'] !== 'undefined' && req['headers']['x-bluebox-authorization'] != null) {
       let isDecodeMode = await authorizer.authorizeAccess(req['headers']['x-bluebox-authorization']);
       if(isDecodeMode) {
-        await getHeaderProxyTarget(req.headers).then(response => {
+        await getHeaderProxyTarget(req.headers, req.path).then(response => {
           proxyTarget = response;
         }).catch(error => {
           res.send(error);
@@ -58,10 +59,10 @@ async function urlParamsFiller(string, params)  {
   return string;
 }
 
-async function getHeaderProxyTarget(headers) {
+async function getHeaderProxyTarget(headers, path) {
   return new Promise(function(resolve, reject) {
     if(typeof headers['x-bluebox-forward-to'] !== 'undefined' && headers['x-bluebox-forward-to'] != null) {
-      resolve(headers['x-bluebox-forward-to']);
+      resolve(headers['x-bluebox-forward-to'] + path.substring(1));
     } else {
       reject({"message": "Invalid x-bluebox-forward-to header. Please set a proxy target."});
     }
