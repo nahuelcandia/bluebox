@@ -2,29 +2,56 @@ service:
   name: bluebox
 
 custom:
-  vpc:
-    staging:
-      securityGroupIds: []
-      subnetIds: []
-    production:
-      securityGroupIds: []
-      subnetIds: []
+#  vpc:
+#    staging:
+#      securityGroupIds: []
+#      subnetIds: []
+#    production:
+#      securityGroupIds: []
+#      subnetIds: []
   region:
     staging: us-east-1
     production: us-east-1
   dynamodb:
     stages:
       - staging
+      - production
     start:
       port: 8000
       inMemory: true
       migrate: true
     migration:
       dir: offline/migrations
+  vpcConfig:
+    cidrBlock: '10.0.0.0/16'
+
+    # if createNatGateway is a boolean "true", a NAT Gateway and EIP will be provisioned in each zone
+    # if createNatGateway is a number, that number of NAT Gateways will be provisioned
+    createNatGateway: 1
+
+    # When enabled, the DB subnet will only be accessible from the Application subnet
+    # Both the Public and Application subnets will be accessible from 0.0.0.0/0
+    createNetworkAcl: true
+    createDbSubnet: true
+    createParameters: true
+    zones:
+      - us-east-1a
+      - us-east-1b
+      - us-east-1c
+
+    # By default, S3 and DynamoDB endpoints will be available within the VPC
+    # see https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html
+    # for a list of available service endpoints to provision within the VPC
+    # (varies per region)
+    services:
+      - kms
+      - secretsmanager
+    exportOutputs: false
 
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
+  - serverless-vpc-plugin
 
 provider:
   name: aws
@@ -51,9 +78,10 @@ functions:
     handler: index.app
     events:
       - http:
-          method: '*'
+          method: 'any'
           path: '/{any+}' # Catch all unknown routes and redirect to main handler
           cors: true
+      
 
 resources:
   Resources:

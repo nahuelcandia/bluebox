@@ -30,4 +30,9 @@ app.delete('*', inboundProxy.redirectRequest);
 app.patch('*', inboundProxy.redirectRequest);
 app.options('*', inboundProxy.redirectRequest);
 
-module.exports.app = serverless(app);
+function expressApp(req,res, next) {
+  if (!req.path) req.url = `/${req.url}`;
+  return app(req,res, next);
+}
+
+module.exports.app = serverless(expressApp);
