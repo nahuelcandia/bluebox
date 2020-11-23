@@ -71,11 +71,15 @@ async function getHeaderProxyTarget(headers, path) {
 
 async function forwardRequest(req, proxyTarget, isDecodeMode) {
   return new Promise(async function(resolve, reject) {
+    delete req.headers.host;
+    delete req.headers['x-bluebox-authorization'];
+    delete req.headers['x-bluebox-forward-to'];
+
     let options = {
       url: proxyTarget,
       method: req.method,
       json: true,
-      headers: {},
+      headers: req.headers,
       followAllRedirects: true
     }
   
@@ -99,7 +103,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
     } else {
       options = await bluebox.encodeSensibleData(options);
     }
-    console.log(options)
+    //console.log(options)
     rp(options)
     .then(response => {
       resolve(response);
