@@ -9,7 +9,9 @@ exports.redirectRequest = async function (req, res) {
     // Otherwise, it will act as an encoder; the sensible data will be catched and replaced by aliases, and then
     // forwarded to the URL defined in the process.env.PROXY_TARGET adding the same path.
     // On both cases the method used is the same of the original request.
-
+    // NOTE the proxyTarget should only contain the URL Schema (http:// or https://) and domain (mydomain.com / api.mydomain.com / 127.0.1.1)
+    // Ex. https://api.mydomain.com
+    
     let proxyTarget = process.env.PROXY_TARGET;
     proxyTarget += (req.path)? req.path.substring(1) : null;
     
@@ -99,9 +101,9 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
     }
   
     if(isDecodeMode) {
-      options = await bluebox.decodeSensibleData(options);
+      options = await bluebox.blueboxReplacer(false, options); //decode sensitive data
     } else {
-      options = await bluebox.encodeSensibleData(options);
+      options = await bluebox.blueboxReplacer(true, options); //encode sensitive data
     }
     //console.log(options)
     rp(options)

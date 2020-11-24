@@ -1,13 +1,32 @@
 'use strict';
 
-exports.encodeSensibleData = async function (data) {
-    console.log('Encode sensible data');
+exports.blueboxReplacer = async function (cypherAction, data) {
+    // Searches for parameters to replace in the data
+    // based on the config/replacementRules.json
+    // for each item found it will encrypt or decrypt the data.
+    // if cypherAction is true it will encrypt, otherwise it will decrypt the data.
 
-    return data
+    let replacedData = {}
+    
+    if(cypherAction) {
+        replacedData = await encodeSensibleData (data);
+    } else {
+        replacedData = await decodeSensibleData (data);
+    }
+
+    return replacedData
 }
 
-exports.decodeSensibleData = async function (data) {
-    console.log('Decode sensible data');
+async function  encodeSensibleData (data) {
+    return new Promise(function(resolve, reject) {
+        console.log('Encode sensible data');
+        resolve(data)
+    });
+}
 
-    return data
+async function decodeSensibleData (data) {
+    return new Promise(function(resolve, reject) {
+        console.log('Decode sensible data');
+        resolve(data)
+    });
 }
