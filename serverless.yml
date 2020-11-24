@@ -27,7 +27,7 @@ custom:
 
     # if createNatGateway is a boolean "true", a NAT Gateway and EIP will be provisioned in each zone
     # if createNatGateway is a number, that number of NAT Gateways will be provisioned
-    createNatGateway: 1
+    createNatGateway: true
 
     # When enabled, the DB subnet will only be accessible from the Application subnet
     # Both the Public and Application subnets will be accessible from 0.0.0.0/0
@@ -47,11 +47,14 @@ custom:
       - kms
       - secretsmanager
     exportOutputs: false
-
+  associateWaf:
+    name: BlueboxWaf
+    version: Regional #(optional) Regional | V2
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-vpc-plugin
+  - serverless-associate-waf
 
 provider:
   name: aws
@@ -85,21 +88,64 @@ functions:
           method: 'any'
           path: '/{any+}' # Catch all unknown routes and redirect to main handler
           cors: true
-      
-
 resources:
-  Resources:
-    BlueboxDynamoDbTable:
-      Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Retain
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: alias
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: alias
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+  BlueboxDynamoDbTable:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'CreditCardTokenizerTable'
+      AttributeDefinitions: 
+        - AttributeName: "Hash_Key"
+          AttributeType: "S"
+        - AttributeName: "Account_Id"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "Hash_Key"
+          KeyType: "HASH"
+        - AttributeName: "Account_Id"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: Yes
+        SSEType: 'KMS'
+  CMKey: 
+    Type: AWS::KMS::Key
+    Properties: 
+      Description: 'Customer managed key to be used for dynamo items encryption'
+      Enabled: Yes
+      EnableKeyRotation: Yes
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Join 
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - ':root'
+            Action: 'kms:*'
+            Resource: '*'
+  KeyAlias:
+    Type: 'AWS::KMS::Alias'
+    Properties:
+      AliasName: !Sub 'alias/${self:service.name}'
+      TargetKeyId: !Ref CMKey
+Outputs:
+  KMSKeyID:
+    Description: ARN for CMS Key created
+    Value: !GetAtt CMKey.Arn
+  LayerVersionArn:
+    Description: ARN for the published Layer version
+    Value:
+      Ref: LambdaLayer
+    Export:
+      Name:
+        Fn::Sub: 'TokenizeData'
+  DynamoDBArn:
+    Description: ARN for DynamoDB Table
+    Value: !GetAtt TokenDatabase.Arn
