@@ -68,7 +68,7 @@ serverless offline start
 The core AWS components used by this Quick Start include the following AWS services. (If
 you are new to AWS, see Getting Started with AWS.)
 
-- CloudFront: acts as the reverse proxy.
+
 - AWS Lambda: encrypts the information, saves it into DynamoDB and replaces it by aliases.
 - DynamoDB: stores the sensitive data encrypted.
 - Inspector [TBD]: Automated security assessment service to help improve the security and compliance of applications deployed on AWS.
