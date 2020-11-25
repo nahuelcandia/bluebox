@@ -15,7 +15,7 @@ const { encrypt, decrypt } = buildClient(
 /* A KMS CMK is required to generate the data key.
 * You need kms:GenerateDataKey permission on the CMK in generatorKeyId.
 */
-const generatorKeyId = 'arn:aws:kms:us-west-2:658956600833:alias/EncryptDecrypt'
+const generatorKeyId = process.env.KMS_ARN;
 
 /* Adding alternate KMS keys that can decrypt.
 * Access to kms:Encrypt is required for every CMK in keyIds.
@@ -25,7 +25,7 @@ const generatorKeyId = 'arn:aws:kms:us-west-2:658956600833:alias/EncryptDecrypt'
 * This is *only* to demonstrate how the CMK ARNs are configured.
 */
 const keyIds = [
-    'arn:aws:kms:us-west-2:658956600833:key/b3537ef1-d8dc-4780-9f5a-55776cbb2f7f'
+    process.env.KMS_CMK_KEYID
 ]
 
 /* The KMS keyring must be configured with the desired CMKs */
@@ -41,9 +41,9 @@ const keyring = new KmsKeyringNode({ generatorKeyId, keyIds })
 * See: https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/concepts.html#encryption-context
 */
 const context = {
-    stage: 'demo',
-    purpose: 'simple demonstration app',
-    origin: 'us-west-2'
+    stage: process.env.NODE_ENV,
+    //purpose: 'simple demonstration app',
+    origin: process.env.KMS_REGION
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {
