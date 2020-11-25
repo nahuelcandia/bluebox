@@ -143,7 +143,9 @@ Amount of Records | TCO
 1,000,000 | $1 
 
 ## Architecture Diagram
-
+- https://aws.amazon.com/blogs/database/applying-best-practices-for-securing-sensitive-data-in-amazon-dynamodb/
+- https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/kms_simple.ts
+- https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/caching_cmm.ts
 
 ## Contributing
 Please see our contributing.md.

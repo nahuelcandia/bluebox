@@ -1,5 +1,3 @@
-//https://aws.amazon.com/blogs/database/applying-best-practices-for-securing-sensitive-data-in-amazon-dynamodb/
-
 const dynamoose = require("dynamoose");
 
 const ddb = new dynamoose.aws.sdk.DynamoDB({

@@ -1,6 +1,3 @@
-//From https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/kms_simple.ts
-// https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/caching_cmm.ts
-
 const { KmsKeyringNode, buildClient, CommitmentPolicy, NodeCachingMaterialsManager, getLocalCryptographicMaterialsCache } = require ('@aws-crypto/client-node');
 
 /* This builds the client with the REQUIRE_ENCRYPT_REQUIRE_DECRYPT commitment policy,
