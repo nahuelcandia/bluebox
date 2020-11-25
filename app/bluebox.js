@@ -1,6 +1,7 @@
 'use strict';
 const replacementRules = require("../config/replacementRules.json");
-const { encodeSensibleData, decodeSensibleData } = require("./kmsCypher");
+const { encodeSensibleData, decodeSensibleData } = require("./cypher");
+const { saveInDb, getFromDb } = require("./dynamodb");
 
 exports.blueboxReplacer = async function (cypherAction, data) {
     // Searches for parameters to replace in the data
@@ -40,8 +41,10 @@ async function replaceAndCypher(object, indexName, cypherAction){
 
 async function cypher(action, value) {
     if(action) {
-        return await decodeSensibleData(value);
+        let encodedValue = await getFromDb(value); //the value is the alias
+        return await decodeSensibleData(encodedValue); //return raw data
     } else {
-        return await encodeSensibleData(value);
+        let encodedValue = await encodeSensibleData(value); //value is the raw data
+        return await saveInDb(encodedValue) //return alias
     }
 }

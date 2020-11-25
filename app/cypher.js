@@ -1,5 +1,7 @@
 //From https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/kms_simple.ts
-const { KmsKeyringNode, buildClient, CommitmentPolicy } = require ('@aws-crypto/client-node');
+// https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/caching_cmm.ts
+
+const { KmsKeyringNode, buildClient, CommitmentPolicy, NodeCachingMaterialsManager, getLocalCryptographicMaterialsCache } = require ('@aws-crypto/client-node');
 
 /* This builds the client with the REQUIRE_ENCRYPT_REQUIRE_DECRYPT commitment policy,
 * which enforces that this client only encrypts using committing algorithm suites
@@ -31,6 +33,46 @@ const keyIds = [
 /* The KMS keyring must be configured with the desired CMKs */
 const keyring = new KmsKeyringNode({ generatorKeyId, keyIds })
 
+/* Create a cache to hold the data keys (and related cryptographic material).
+   * This example uses the local cache provided by the Encryption SDK.
+   * The `capacity` value represents the maximum number of entries
+   * that the cache can hold.
+   * To make room for an additional entry,
+   * the cache evicts the oldest cached entry.
+   * Both encrypt and decrypt requests count independently towards this threshold.
+   * Entries that exceed any cache threshold are actively removed from the cache.
+   * By default, the SDK checks one item in the cache every 60 seconds (60,000 milliseconds).
+   * To change this frequency, pass in a `proactiveFrequency` value
+   * as the second parameter. This value is in milliseconds.
+   */
+  const capacity = 100
+  const cache = getLocalCryptographicMaterialsCache(capacity)
+
+  /* maxAge is the time in milliseconds that an entry will be cached.
+   * Elements are actively removed from the cache.
+   */
+  const maxAge = 1000 * 60
+
+  /* The maximum amount of bytes that will be encrypted under a single data key.
+   * This value is optional,
+   * but you should configure the lowest value possible.
+   */
+  const maxBytesEncrypted = 100
+
+  /* The maximum number of messages that will be encrypted under a single data key.
+   * This value is optional,
+   * but you should configure the lowest value possible.
+   */
+  const maxMessagesEncrypted = 10
+
+  const cachingCMM = new NodeCachingMaterialsManager({
+    backingMaterials: keyring,
+    cache,
+    maxAge,
+    maxBytesEncrypted,
+    maxMessagesEncrypted,
+  })
+
 /* Encryption context is a *very* powerful tool for controlling and managing access.
 * It is ***not*** secret!
 * Encrypted data is opaque.
@@ -42,22 +84,21 @@ const keyring = new KmsKeyringNode({ generatorKeyId, keyIds })
 */
 const context = {
     stage: process.env.NODE_ENV,
-    //purpose: 'simple demonstration app',
     origin: process.env.KMS_REGION
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {
     /* Encrypt the data. */
-    const { result } = await encrypt(keyring, cleartext, {
+    const { result } = await encrypt(cachingCMM, cleartext, {
         encryptionContext: context,
     })
-    /* Return the values so the code can be tested. */
+    //returns the buffer encrypted and encoded in base64
     return result.toString('base64');
 }
 
 module.exports.decodeSensibleData = async function(data) { 
     /* Decrypt the data. */
-    const { plaintext, messageHeader } = await decrypt(keyring, Buffer.from(data, 'base64'))
+    const { plaintext, messageHeader } = await decrypt(cachingCMM, Buffer.from(data, 'base64'))
     
     /* Grab the encryption context so you can verify it. */
     const { encryptionContext } = messageHeader
@@ -73,6 +114,6 @@ module.exports.decodeSensibleData = async function(data) {
         if (encryptionContext[key] !== value)
         throw new Error('Encryption Context does not match expected values')
     })
-
+    //returns the plain text decoded into utf8
     return plaintext.toString('utf8')
 }

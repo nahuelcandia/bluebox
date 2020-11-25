@@ -15,3 +15,13 @@ if (process.env.IS_OFFLINE) {
 const client = new AWS.DynamoDB.DocumentClient(options);
 
 module.exports = client;
+
+module.exports.saveInDb = async function(rawData) {
+  let alias = rawData;
+  return alias
+}
+
+module.exports.getFromDb = async function(alias) {
+  let encodedValue = alias;
+  return encodedValue
+}
