@@ -24,6 +24,7 @@
         "morgan": "^1.10.0",
         "request-promise": "^4.2.6",
         "serverless-http": "^2.6.0",
+        "serverless-plugin-custom-domain": "^2.0.4",
         "serverless-vpc-plugin": "^1.0.1",
         "uuid": "^2.0.3"
     },

@@ -2,6 +2,7 @@ service:
   name: bluebox
 
 custom:
+  domain: "api.mydomain.com"
 #  vpc:
 #    staging:
 #      securityGroupIds: []
@@ -55,6 +56,7 @@ plugins:
   - serverless-dynamodb-local
   - serverless-vpc-plugin
   - serverless-associate-waf
+  - serverless-plugin-custom-domain
 
 provider:
   name: aws
@@ -89,63 +91,50 @@ functions:
           path: '/{any+}' # Catch all unknown routes and redirect to main handler
           cors: true
 resources:
-  BlueboxDynamoDbTable:
-    Type: 'AWS::DynamoDB::Table'
-    DeletionPolicy: Retain
-    Properties:
-      TableName: 'CreditCardTokenizerTable'
-      AttributeDefinitions: 
-        - AttributeName: "Hash_Key"
-          AttributeType: "S"
-        - AttributeName: "Account_Id"
-          AttributeType: "S"
-      KeySchema: 
-        - AttributeName: "Hash_Key"
-          KeyType: "HASH"
-        - AttributeName: "Account_Id"
-          KeyType: "RANGE"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-      SSESpecification:
-        SSEEnabled: Yes
-        SSEType: 'KMS'
-  CMKey: 
-    Type: AWS::KMS::Key
-    Properties: 
-      Description: 'Customer managed key to be used for dynamo items encryption'
-      Enabled: Yes
-      EnableKeyRotation: Yes
-      KeyPolicy:
-        Version: 2012-10-17
-        Id: key-default-1
-        Statement:
-          - Sid: Enable IAM User Permissions
-            Effect: Allow
-            Principal:
-              AWS: !Join 
-                - ''
-                - - 'arn:aws:iam::'
-                  - !Ref 'AWS::AccountId'
-                  - ':root'
-            Action: 'kms:*'
-            Resource: '*'
-  KeyAlias:
-    Type: 'AWS::KMS::Alias'
-    Properties:
-      AliasName: !Sub 'alias/${self:service.name}'
-      TargetKeyId: !Ref CMKey
-Outputs:
-  KMSKeyID:
-    Description: ARN for CMS Key created
-    Value: !GetAtt CMKey.Arn
-  LayerVersionArn:
-    Description: ARN for the published Layer version
-    Value:
-      Ref: LambdaLayer
-    Export:
-      Name:
-        Fn::Sub: 'TokenizeData'
-  DynamoDBArn:
-    Description: ARN for DynamoDB Table
-    Value: !GetAtt TokenDatabase.Arn
+  Resources:
+    BlueboxDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: 'CreditCardTokenizerTable'
+        AttributeDefinitions: 
+          - AttributeName: "Hash_Key"
+            AttributeType: "S"
+          - AttributeName: "Account_Id"
+            AttributeType: "S"
+        KeySchema: 
+          - AttributeName: "Hash_Key"
+            KeyType: "HASH"
+          - AttributeName: "Account_Id"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        SSESpecification:
+          SSEEnabled: true
+          SSEType: 'KMS'
+    CMKey: 
+      Type: AWS::KMS::Key
+      Properties: 
+        Description: 'Customer managed key to be used for dynamo items encryption'
+        Enabled: true
+        EnableKeyRotation: true
+        KeyPolicy:
+          Version: 2012-10-17
+          Id: key-default-1
+          Statement:
+            - Sid: Enable IAM User Permissions
+              Effect: Allow
+              Principal:
+                AWS: !Join 
+                  - ''
+                  - - 'arn:aws:iam::'
+                    - !Ref 'AWS::AccountId'
+                    - ':root'
+              Action: 'kms:*'
+              Resource: '*'
+    KeyAlias:
+      Type: 'AWS::KMS::Alias'
+      Properties:
+        AliasName: !Sub 'alias/${self:service.name}'
+        TargetKeyId: !Ref CMKey
