@@ -47,21 +47,15 @@ const context = {
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {
-    console.log('Encode sensible data');
-    console.log(cleartext)
     /* Encrypt the data. */
     const { result } = await encrypt(keyring, cleartext, {
         encryptionContext: context,
     })
-    console.log(result.toString('base64'))
     /* Return the values so the code can be tested. */
     return result.toString('base64');
 }
 
 module.exports.decodeSensibleData = async function(data) { 
-    console.log('Decode sensible data');
-    
-    console.log(Buffer.from(data, 'base64'))
     /* Decrypt the data. */
     const { plaintext, messageHeader } = await decrypt(keyring, Buffer.from(data, 'base64'))
     
@@ -79,6 +73,6 @@ module.exports.decodeSensibleData = async function(data) {
         if (encryptionContext[key] !== value)
         throw new Error('Encryption Context does not match expected values')
     })
-    console.log(plaintext.toString('utf8'))
+
     return plaintext.toString('utf8')
 }
