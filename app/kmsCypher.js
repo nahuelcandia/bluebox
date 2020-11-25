@@ -47,36 +47,23 @@ const context = {
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {
-
-    // export async function encodeSensibleData = async function(data) {
-    //     return new Promise(async function(resolve, reject) {
-    //         console.log('Encode sensible data');
-    //         console.log(data);
-    //         data = 'Bananas';
-    //         resolve(data)
-    //     });
-    // }
-
+    console.log('Encode sensible data');
+    console.log(cleartext)
     /* Encrypt the data. */
     const { result } = await encrypt(keyring, cleartext, {
         encryptionContext: context,
     })
-
+    console.log(result.toString('base64'))
     /* Return the values so the code can be tested. */
-    return result
+    return result.toString('base64');
 }
 
 module.exports.decodeSensibleData = async function(data) { 
-    // export async function  decodeSensibleData = async function(data) {
-    //     return new Promise(async function(resolve, reject) {
-    //         console.log('Decode sensible data');
-    //         console.log(data);
-    //         data = 'Petete';
-    //         resolve(data)
-    //     });
-    // }
+    console.log('Decode sensible data');
+    
+    console.log(Buffer.from(data, 'base64'))
     /* Decrypt the data. */
-    const { plaintext, messageHeader } = await decrypt(keyring, data)
+    const { plaintext, messageHeader } = await decrypt(keyring, Buffer.from(data, 'base64'))
     
     /* Grab the encryption context so you can verify it. */
     const { encryptionContext } = messageHeader
@@ -92,6 +79,6 @@ module.exports.decodeSensibleData = async function(data) {
         if (encryptionContext[key] !== value)
         throw new Error('Encryption Context does not match expected values')
     })
-    
-    return plaintext
+    console.log(plaintext.toString('utf8'))
+    return plaintext.toString('utf8')
 }

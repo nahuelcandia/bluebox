@@ -2,7 +2,7 @@ service:
   name: bluebox
 
 custom:
-  domain: "api.mydomain.com"
+  domain: "bluebox.rebill.to"
 #  vpc:
 #    staging:
 #      securityGroupIds: []
@@ -94,7 +94,7 @@ resources:
   Resources:
     BlueboxDynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Retain
+      DeletionPolicy: Delete #Retain
       Properties:
         TableName: 'CreditCardTokenizerTable'
         AttributeDefinitions: 
