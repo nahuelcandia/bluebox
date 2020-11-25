@@ -24,7 +24,7 @@ exports.redirectRequest = async function (req, res) {
         }).catch(error => {
           res.send(error);
         });
-        await forwardRequest(req, proxyTarget, isDecodeMode).then(response => {
+        await forwardRequest(req, proxyTarget, true).then(response => {
           res.send(response);
         }).catch(error => {
           res.send(error);
@@ -101,11 +101,11 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
     }
   
     if(isDecodeMode) {
-      options = await bluebox.blueboxReplacer(false, options); //decode sensitive data
+      options = await bluebox.blueboxReplacer(true, options); //decode sensitive data
     } else {
-      options = await bluebox.blueboxReplacer(true, options); //encode sensitive data
+      options = await bluebox.blueboxReplacer(false, options); //encode sensitive data
     }
-    //console.log(options)
+
     rp(options)
     .then(response => {
       resolve(response);

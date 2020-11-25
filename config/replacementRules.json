@@ -1,39 +1,32 @@
-{
-    "replacementRules": [
-        {
-            "id": 1,
-            "attributeName": "card_number",
-            "findIn": ["body", "headers", "query", "params"],
-            "regex": null,
-            "ttl": null
-        },
-        {
-            "id": 2,
-            "attributeName": "cvv",
-            "findIn": ["body", "headers", "query", "params"],
-            "regex": null,
-            "ttl": 3600
-        },
-        {
-            "id": 3,
-            "attributeName": "cvc",
-            "findIn": ["body", "headers", "query", "params"],
-            "regex": null,
-            "ttl": 3600
-        },
-        {
-            "id": 4,
-            "attributeName": "security_code",
-            "findIn": ["body", "headers", "query", "params"],
-            "regex": null,
-            "ttl": 3600
-        },
-        {
-            "id": 5,
-            "attributeName": "cvv2",
-            "findIn": ["body", "headers", "query", "params"],
-            "regex": null,
-            "ttl": 3600
-        }
-    ]
-}
+[
+    {
+        "attributeName": "card_number",
+        "findIn": ["body", "headers", "query", "params"],
+        "regex": "/\"card_number\": \"([^\"]+)\"/g",
+        "ttl": null
+    },
+    {
+        "attributeName": "cvv",
+        "findIn": ["body", "headers", "query", "params"],
+        "regex": "/\"cvv\": \"([^\"]+)\"/g",
+        "ttl": 3600
+    },
+    {
+        "attributeName": "cvc",
+        "findIn": ["body", "headers", "query", "params"],
+        "regex": "/\"cvc\": \"([^\"]+)\"/g",
+        "ttl": 3600
+    },
+    {
+        "attributeName": "security_code",
+        "findIn": ["body", "headers", "query", "params"],
+        "regex": "/\"security_code\": \"([^\"]+)\"/g",
+        "ttl": 3600
+    },
+    {
+        "attributeName": "cvv2",
+        "findIn": ["body", "headers", "query", "params"],
+        "regex": "/\"cvv2\": \"([^\"]+)\"/g",
+        "ttl": 3600
+    }
+]
