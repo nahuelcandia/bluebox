@@ -7,24 +7,34 @@ exports.blueboxReplacer = async function (cypherAction, data) {
     // based on the config/replacementRules.json
     // for each item found it will encrypt or decrypt the data.
     // if cypherAction is true it will decrypt, otherwise it will encrypt the data.
-    let responseData = {}
-    for(var i= 0; i < replacementRules.length; i++) {
-        responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction);
-    }
-    return responseData
+    return new Promise(async function(resolve, reject) {
+        try {
+            let responseData = {}
+            for(var i= 0; i < replacementRules.length; i++) {
+                responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction);
+            }
+            resolve(responseData)
+        } catch(e) {
+            reject(e)
+        }
+    });
 }
 
 async function replaceAndCypher(object, indexName, cypherAction){
     return new Promise(async function(resolve, reject) {
-        for(var x in object){
-            if(typeof object[x] == typeof {}){
-              await replaceAndCypher(object[x], indexName, cypherAction);
+        try {
+            for(var x in object){
+                if(typeof object[x] == typeof {}){
+                  await replaceAndCypher(object[x], indexName, cypherAction);
+                }
+                if(x === indexName){ 
+                  object[indexName] = await cypher(cypherAction, object[indexName]);
+                }
             }
-            if(x === indexName){ 
-              object[indexName] = await cypher(cypherAction, object[indexName]);
-            }
+            resolve(object); 
+        } catch (e) {
+            reject(e);
         }
-        resolve(object); 
     });
 }
 

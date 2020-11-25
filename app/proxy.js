@@ -73,48 +73,52 @@ async function getHeaderProxyTarget(headers, path) {
 
 async function forwardRequest(req, proxyTarget, isDecodeMode) {
   return new Promise(async function(resolve, reject) {
-    delete req.headers.host;
-    delete req.headers['x-bluebox-authorization'];
-    delete req.headers['x-bluebox-forward-to'];
+    try {
+      delete req.headers.host;
+      delete req.headers['x-bluebox-authorization'];
+      delete req.headers['x-bluebox-forward-to'];
 
-    let options = {
-      url: proxyTarget,
-      method: req.method,
-      json: true,
-      headers: req.headers,
-      followAllRedirects: true
-    }
-  
-    //Intercept and forward the querystrings
-    if(typeof req.query !== 'undefined' && req.query != null && isEmpty(req.query) == false){
-      options['qs'] = req.query;
-    }
-  
-    //Intercept and forward the path parameters
-    if(typeof req.params !== 'undefined' && req.params != null && isEmpty(req.params) == false){
-      options['url'] = await urlParamsFiller(options['url'], req.params);
-    }
-  
-    //Intercept and forward the request body
-    if(typeof req.body !== 'undefined' && req.body != null && isEmpty(req.body) == false) {
-      options['body'] = req.body;
-    }
-  
-    if(isDecodeMode) {
-      options = await bluebox.blueboxReplacer(true, options); //decode sensitive data
-    } else {
-      options = await bluebox.blueboxReplacer(false, options); //encode sensitive data
-    }
-
-    rp(options)
-    .then(response => {
-      resolve(response);
-    }).catch(err => {
-      if(typeof err.response !== 'undefined') {
-        reject(err.response);
-      } else {
-        reject(err);
+      let options = {
+        url: proxyTarget,
+        method: req.method,
+        json: true,
+        headers: req.headers,
+        followAllRedirects: true
       }
-    });
+    
+      //Intercept and forward the querystrings
+      if(typeof req.query !== 'undefined' && req.query != null && isEmpty(req.query) == false){
+        options['qs'] = req.query;
+      }
+    
+      //Intercept and forward the path parameters
+      if(typeof req.params !== 'undefined' && req.params != null && isEmpty(req.params) == false){
+        options['url'] = await urlParamsFiller(options['url'], req.params);
+      }
+    
+      //Intercept and forward the request body
+      if(typeof req.body !== 'undefined' && req.body != null && isEmpty(req.body) == false) {
+        options['body'] = req.body;
+      }
+    
+      if(isDecodeMode) {
+        options = await bluebox.blueboxReplacer(true, options); //decode sensitive data
+      } else {
+        options = await bluebox.blueboxReplacer(false, options); //encode sensitive data
+      }
+
+      rp(options)
+      .then(response => {
+        resolve(response);
+      }).catch(err => {
+        if(typeof err.response !== 'undefined') {
+          reject(err.response);
+        } else {
+          reject(err);
+        }
+      });
+    } catch(e) {
+      reject(e);
+    }
   });
 }
