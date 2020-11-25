@@ -1,5 +1,6 @@
 'use strict';
 const replacementRules = require("../config/replacementRules.json");
+const { encodeSensibleData, decodeSensibleData } = require("./kmsCypher");
 
 exports.blueboxReplacer = async function (cypherAction, data) {
     // Searches for parameters to replace in the data
@@ -11,24 +12,6 @@ exports.blueboxReplacer = async function (cypherAction, data) {
         responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction);
     }
     return responseData
-}
-
-async function  encodeSensibleData (data) {
-    return new Promise(async function(resolve, reject) {
-        console.log('Encode sensible data');
-        console.log(data);
-        data = 'Bananas';
-        resolve(data)
-    });
-}
-
-async function decodeSensibleData (data) {
-    return new Promise(async function(resolve, reject) {
-        console.log('Decode sensible data');
-        console.log(data);
-        data = 'Petete';
-        resolve(data)
-    });
 }
 
 async function replaceAndCypher(object, indexName, cypherAction){
