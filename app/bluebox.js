@@ -12,7 +12,7 @@ exports.blueboxReplacer = async function (cypherAction, data) {
         try {
             let responseData = {}
             for(var i= 0; i < replacementRules.length; i++) {
-                responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction);
+                responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction, replacementRules[i].ttl);
             }
             resolve(responseData)
         } catch(e) {
@@ -21,7 +21,7 @@ exports.blueboxReplacer = async function (cypherAction, data) {
     });
 }
 
-async function replaceAndCypher(object, indexName, cypherAction){
+async function replaceAndCypher(object, indexName, cypherAction, ttl){
     return new Promise(async function(resolve, reject) {
         try {
             for(var x in object){
@@ -29,7 +29,7 @@ async function replaceAndCypher(object, indexName, cypherAction){
                   await replaceAndCypher(object[x], indexName, cypherAction);
                 }
                 if(x === indexName){ 
-                  object[indexName] = await cypher(cypherAction, object[indexName]);
+                  object[indexName] = await cypher(cypherAction, object[indexName], ttl);
                 }
             }
             resolve(object); 
@@ -39,12 +39,12 @@ async function replaceAndCypher(object, indexName, cypherAction){
     });
 }
 
-async function cypher(action, value) {
+async function cypher(action, value, ttl) {
     if(action) {
         let encodedValue = await getFromDb(value); //the value is the alias
         return await decodeSensibleData(encodedValue); //return raw data
     } else {
         let encodedValue = await encodeSensibleData(value); //value is the raw data
-        return await saveInDb(encodedValue) //return alias
+        return await saveInDb(encodedValue, ttl) //return alias
     }
 }

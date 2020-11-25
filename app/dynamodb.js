@@ -28,9 +28,13 @@ const blueboxData = dynamoose.model("bluebox-"+process.env.NODE_ENV, new dynamoo
 });
 
 
-module.exports.saveInDb = async function(rawData, expiresExpire) {
-  let alias = rawData;
-  return alias
+module.exports.saveInDb = async function(encryptedData, ttl) {
+  const document = new blueboxData({
+      "value": encryptedData,
+      "ttl": (ttl)? ttl : null
+  });
+
+  return myUser.save(document)
 }
 
 module.exports.getFromDb = async function(alias) {
