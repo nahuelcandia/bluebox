@@ -12,7 +12,8 @@ exports.blueboxReplacer = async function (cypherAction, data) {
         try {
             let responseData = {}
             for(var i= 0; i < replacementRules.length; i++) {
-                responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction, replacementRules[i].ttl);
+                let ttl = (replacementRules[i].ttl)? replacementRules[i].ttl : null;
+                responseData = await replaceAndCypher(data, replacementRules[i].attributeName, cypherAction, ttl);
             }
             resolve(responseData)
         } catch(e) {
@@ -26,7 +27,7 @@ async function replaceAndCypher(object, indexName, cypherAction, ttl){
         try {
             for(var x in object){
                 if(typeof object[x] == typeof {}){
-                  await replaceAndCypher(object[x], indexName, cypherAction);
+                  await replaceAndCypher(object[x], indexName, cypherAction, ttl);
                 }
                 if(x === indexName){ 
                   object[indexName] = await cypher(cypherAction, object[indexName], ttl);

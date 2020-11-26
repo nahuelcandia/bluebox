@@ -1,4 +1,5 @@
 const dynamoose = require("dynamoose");
+const { v4: uuidv4 } = require('uuid');
 
 const ddb = new dynamoose.aws.sdk.DynamoDB({
   "accessKeyId": process.env.DB_ACCESSKEYID,
@@ -12,27 +13,41 @@ if(process.env.NODE_ENV === 'dev') {
   dynamoose.aws.ddb.set(ddb);
 }
 
-const blueboxData = dynamoose.model("bluebox-"+process.env.NODE_ENV, new dynamoose.Schema({
+const blueboxData = dynamoose.model("bluebox", new dynamoose.Schema({
     "alias": {
       "type": String,
       "hashKey": true
     }, 
     "value": String, 
-    "ttl": Number
+    "ttl": Number,
+    "updatedAt": Date, 
+    "createdAt": Date
   }), { 
     "saveUnknown": false,
     "timestamps": true,
-    "create": false
+    "create": true
 });
 
 
 module.exports.saveInDb = async function(encryptedData, ttl) {
-  const document = new blueboxData({
-      "value": encryptedData,
-      "ttl": (ttl)? ttl : null
+  return new Promise(async function(resolve, reject) {
+    try {
+      let inputData = {
+        "alias": 'bluebox_'+uuidv4().toString().replace(/-/g, ''),
+        "value": encryptedData,
+        "updatedAt": Date.now(), 
+        "createdAt": Date.now()
+      }
+      if(ttl) inputData.ttl = ttl;
+      const document = new blueboxData(inputData);
+      console.log(document)
+      document.save().catch(error => { console.log(error); reject(error); });
+      resolve(inputData.alias);
+    } catch(e) {
+      console.log(e);
+      reject(e);
+    }
   });
-
-  return myUser.save(document)
 }
 
 module.exports.getFromDb = async function(alias) {

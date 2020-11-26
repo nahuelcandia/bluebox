@@ -96,34 +96,41 @@ resources:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Delete #Retain
       Properties:
-        TableName: 'CreditCardTokenizerTable'
+        TableName: 'bluebox'
         AttributeDefinitions: 
-          - AttributeName: "Hash_Key"
+          - AttributeName: "alias"
             AttributeType: "S"
-          - AttributeName: "Account_Id"
+          - AttributeName: "value"
             AttributeType: "S"
+          - AttributeName: "ttl"
+            AttributeType: "N"
+          - AttributeName: "updatedAt"
+            AttributeType: "N"
+          - AttributeName: "createdAt"
+            AttributeType: "N"
         KeySchema: 
-          - AttributeName: "Hash_Key"
+          - AttributeName: "alias"
             KeyType: "HASH"
-          - AttributeName: "Account_Id"
-            KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
         SSESpecification:
           SSEEnabled: true
           SSEType: 'KMS'
+        TimeToLiveSpecification:
+          AttributeName: "ttl"
+          Enabled: true
     CMKey: 
       Type: AWS::KMS::Key
       Properties: 
-        Description: 'Customer managed key to be used for dynamo items encryption'
+        Description: 'Bluebox CMK for DynamoDb'
         Enabled: true
         EnableKeyRotation: true
         KeyPolicy:
           Version: 2012-10-17
           Id: key-default-1
           Statement:
-            - Sid: Enable IAM User Permissions
+            - Sid: Bluebox IAM
               Effect: Allow
               Principal:
                 AWS: !Join 

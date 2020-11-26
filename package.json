@@ -23,6 +23,7 @@
         "express": "^4.17.1",
         "moment": "^2.24.0",
         "morgan": "^1.10.0",
+        "node-uuid": "^1.4.8",
         "request-promise": "^4.2.6",
         "serverless-http": "^2.6.0",
         "serverless-plugin-custom-domain": "^2.0.4",
