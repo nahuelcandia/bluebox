@@ -85,32 +85,47 @@ const context = {
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {
-    /* Encrypt the data. */
-    const { result } = await encrypt(cachingCMM, cleartext, {
-        encryptionContext: context,
-    })
-    //returns the buffer encrypted and encoded in base64
-    return result.toString('base64');
+    return new Promise(async function(resolve, reject) {
+        try {
+            /* Encrypt the data. */
+            const { result } = await encrypt(cachingCMM, cleartext, {
+                encryptionContext: context,
+            })
+            //returns the buffer encrypted and encoded in base64
+            resolve(result.toString('base64'));
+        } catch(error) {
+            console.log(error);
+            reject(error);
+        }
+    });
 }
 
 module.exports.decodeSensibleData = async function(data) { 
-    /* Decrypt the data. */
-    const { plaintext, messageHeader } = await decrypt(cachingCMM, Buffer.from(data, 'base64'))
-    
-    /* Grab the encryption context so you can verify it. */
-    const { encryptionContext } = messageHeader
-    
-    /* Verify the encryption context.
-        * If you use an algorithm suite with signing,
-        * the Encryption SDK adds a name-value pair to the encryption context that contains the public key.
-        * Because the encryption context might contain additional key-value pairs,
-        * do not add a test that requires that all key-value pairs match.
-        * Instead, verify that the key-value pairs you expect match.
-        */
-    Object.entries(context).forEach(([key, value]) => {
-        if (encryptionContext[key] !== value)
-        throw new Error('Encryption Context does not match expected values')
-    })
-    //returns the plain text decoded into utf8
-    return plaintext.toString('utf8')
+    return new Promise(async function(resolve, reject) {
+        try {
+            /* Decrypt the data. */
+            console.log(data)
+            const { plaintext, messageHeader } = await decrypt(cachingCMM, Buffer.from(data, 'base64'))
+            
+            /* Grab the encryption context so you can verify it. */
+            const { encryptionContext } = messageHeader
+            
+            /* Verify the encryption context.
+                * If you use an algorithm suite with signing,
+                * the Encryption SDK adds a name-value pair to the encryption context that contains the public key.
+                * Because the encryption context might contain additional key-value pairs,
+                * do not add a test that requires that all key-value pairs match.
+                * Instead, verify that the key-value pairs you expect match.
+                */
+            Object.entries(context).forEach(([key, value]) => {
+                if (encryptionContext[key] !== value)
+                reject('Encryption Context does not match expected values')
+            })
+            //returns the plain text decoded into utf8
+            resolve(plaintext.toString('utf8'))
+        } catch(error) {
+            console.log(error);
+            reject(error);
+        }
+    });
 }

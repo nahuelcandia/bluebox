@@ -40,7 +40,6 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
       }
       if(ttl) inputData.ttl = ttl;
       const document = new blueboxData(inputData);
-      console.log(document)
       document.save().catch(error => { console.log(error); reject(error); });
       resolve(inputData.alias);
     } catch(e) {
@@ -51,5 +50,13 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
 }
 
 module.exports.getFromDb = async function(alias) {
-  return await blueboxData.query("alias").eq(alias).limit(1)
+  return new Promise(async function(resolve, reject) {
+    try {
+      let response = await blueboxData.query("alias").eq(alias).attributes(["value"]).limit(1).exec();
+      resolve(response[0].value)
+    } catch(e) {
+      console.log(e);
+      reject(e);
+    }
+  });
 }

@@ -22,8 +22,10 @@ exports.redirectRequest = async function (req, res) {
         await getHeaderProxyTarget(req.headers, req.path).then(response => {
           proxyTarget = response;
         }).catch(error => {
+          console.log(error)
           res.send(error);
         });
+
         await forwardRequest(req, proxyTarget, true).then(response => {
           res.send(response);
         }).catch(error => {
@@ -63,10 +65,15 @@ async function urlParamsFiller(string, params)  {
 
 async function getHeaderProxyTarget(headers, path) {
   return new Promise(function(resolve, reject) {
-    if(typeof headers['x-bluebox-forward-to'] !== 'undefined' && headers['x-bluebox-forward-to'] != null) {
-      resolve(headers['x-bluebox-forward-to'] + path.substring(1));
-    } else {
-      reject({"message": "Invalid x-bluebox-forward-to header. Please set a proxy target."});
+    try {
+      if(typeof headers['x-bluebox-forward-to'] !== 'undefined' && headers['x-bluebox-forward-to'] != null) {
+        resolve(headers['x-bluebox-forward-to'] + path.substring(1));
+      } else {
+        reject({"message": "Invalid x-bluebox-forward-to header. Please set a proxy target."});
+      }
+    } catch(e) {
+      console.log(e);
+      reject(e);
     }
   });
 }
@@ -75,6 +82,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
   return new Promise(async function(resolve, reject) {
     try {
       delete req.headers.host;
+      delete req.headers['content-length'];
       delete req.headers['x-bluebox-authorization'];
       delete req.headers['x-bluebox-forward-to'];
 
@@ -101,16 +109,14 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
         options['body'] = req.body;
       }
     
-      if(isDecodeMode) {
-        options = await bluebox.blueboxReplacer(true, options); //decode sensitive data
-      } else {
-        options = await bluebox.blueboxReplacer(false, options); //encode sensitive data
-      }
-
-      rp(options)
+      options = await bluebox.blueboxReplacer(isDecodeMode, options); //decode sensitive data
+      
+      await rp(options)
       .then(response => {
+        console.log(response)
         resolve(response);
       }).catch(err => {
+        console.log(err)
         if(typeof err.response !== 'undefined') {
           reject(err.response);
         } else {
