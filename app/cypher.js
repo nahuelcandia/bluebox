@@ -104,7 +104,6 @@ module.exports.decodeSensibleData = async function(data) {
     return new Promise(async function(resolve, reject) {
         try {
             /* Decrypt the data. */
-            console.log(data)
             const { plaintext, messageHeader } = await decrypt(cachingCMM, Buffer.from(data, 'base64'))
             
             /* Grab the encryption context so you can verify it. */
