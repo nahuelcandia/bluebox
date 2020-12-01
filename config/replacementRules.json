@@ -5,18 +5,18 @@
     },
     {
         "attributeName": "cvv",
-        "ttl": 3600
+        "ttl": 3
     },
     {
         "attributeName": "cvc",
-        "ttl": 3600
+        "ttl": 3
     },
     {
         "attributeName": "security_code",
-        "ttl": 3600
+        "ttl": 3
     },
     {
         "attributeName": "cvv2",
-        "ttl": 3600
+        "ttl": 3
     }
 ]

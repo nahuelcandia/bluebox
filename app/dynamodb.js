@@ -19,7 +19,7 @@ const blueboxData = dynamoose.model("bluebox", new dynamoose.Schema({
       "hashKey": true
     }, 
     "value": String, 
-    "ttl": Number,
+    "ttl": Date,
     "updatedAt": Date, 
     "createdAt": Date
   }), { 
@@ -38,7 +38,8 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
         "updatedAt": Date.now(), 
         "createdAt": Date.now()
       }
-      if(ttl) inputData.ttl = ttl;
+      if(ttl) inputData.ttl = Math.floor(new Date().addHours(ttl) / 1000);
+
       const document = new blueboxData(inputData);
       document.save().catch(error => { console.log(error); reject(error); });
       resolve(inputData.alias);
@@ -47,6 +48,11 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
       reject(e);
     }
   });
+}
+
+Date.prototype.addHours = function(h) {
+  this.setTime(this.getTime() + (h*60*60*1000));
+  return this;
 }
 
 module.exports.getFromDb = async function(alias) {
