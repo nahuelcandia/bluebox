@@ -33,13 +33,13 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
   return new Promise(async function(resolve, reject) {
     try {
       let inputData = {
-        "alias": 'bluebox_'+uuidv4().toString().replace(/-/g, ''),
+        "alias": 'bx_'+uuidv4().toString().replace(/-/g, '')+'_bx',
         "value": encryptedData,
         "updatedAt": Date.now(), 
         "createdAt": Date.now()
       }
-      if(ttl) inputData.ttl = Math.floor(new Date().addHours(ttl) / 1000);
-
+      //convert ttl from seconds to ms and add to current time, then convert in epoch time format as required by DynamoDB
+      if(ttl) inputData.ttl = Math.floor(new Date().getTime() + (ttl*1000));
       const document = new blueboxData(inputData);
       document.save().catch(error => { console.log(error); reject(error); });
       resolve(inputData.alias);
@@ -48,11 +48,6 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
       reject(e);
     }
   });
-}
-
-Date.prototype.addHours = function(h) {
-  this.setTime(this.getTime() + (h*60*60*1000));
-  return this;
 }
 
 module.exports.getFromDb = async function(alias) {
