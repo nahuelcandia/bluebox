@@ -1,22 +1,27 @@
 [
     {
         "attributeName": "card_number",
+        "regex": null,
         "ttl": null
     },
     {
         "attributeName": "cvv",
-        "ttl": 3
+        "regex": null,
+        "ttl": 3600
     },
     {
         "attributeName": "cvc",
-        "ttl": 3
+        "regex": null,
+        "ttl": 3600
     },
     {
         "attributeName": "security_code",
-        "ttl": 3
+        "regex": null,
+        "ttl": 3600
     },
     {
         "attributeName": "cvv2",
-        "ttl": 3
+        "regex": null,
+        "ttl": 3600
     }
 ]
