@@ -6,8 +6,11 @@ exports.redirectRequest = async function (req, res) {
   try {
     // When access is granted to the Bluebox, it automatically acts as a Decoder of the sensible data.
     // The request will be forwarded to the url defined in the header X-Bluebox-Forward-To
-    // Otherwise, it will act as an encoder; the sensible data will be catched and replaced by aliases, and then
-    // forwarded to the URL defined in the process.env.PROXY_TARGET adding the same path.
+    // Otherwise, it will act as an encoder; the sensible data will be intercepted by its attribute name at any part of the request
+    // (headers, body, params, etc.). Then if a regex is applied, it will only replace the matching expression by an alias, otherwise it will
+    // replace all of its value by the alias.
+    // An alias is the id as it is saved in the database. It will be used to retrieve the encrypted data, and then decode it.
+    // The request will be then forwarded to the URL defined in the process.env.PROXY_TARGET adding the same path(s) and querystring(s).
     // On both cases the method used is the same of the original request.
     // NOTE the proxyTarget should only contain the URL Schema (http:// or https://) and domain (mydomain.com / api.mydomain.com / 127.0.1.1)
     // Ex. https://api.mydomain.com
