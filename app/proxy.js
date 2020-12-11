@@ -1,4 +1,4 @@
-const rp = require('request-promise');
+const sendRequest = require('request-promise');
 const bluebox = require('./bluebox');
 const authorizer = require('./authorizer');
 
@@ -86,7 +86,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       delete req.headers['x-bluebox-authorization'];
       delete req.headers['x-bluebox-forward-to'];
 
-      let options = {
+      let request = {
         url: proxyTarget,
         method: req.method,
         json: true,
@@ -96,27 +96,25 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
     
       //Intercept and forward the querystrings
       if(typeof req.query !== 'undefined' && req.query != null && isEmpty(req.query) == false){
-        options['qs'] = req.query;
+        request['qs'] = req.query;
       }
     
       //Intercept and forward the path parameters
       if(typeof req.params !== 'undefined' && req.params != null && isEmpty(req.params) == false){
-        options['url'] = await urlParamsFiller(options['url'], req.params);
+        request['url'] = await urlParamsFiller(request['url'], req.params);
       }
     
       //Intercept and forward the request body
       if(typeof req.body !== 'undefined' && req.body != null && isEmpty(req.body) == false) {
-        options['body'] = req.body;
+        request['body'] = req.body;
       }
     
-      options = await bluebox.blueboxReplacer(isDecodeMode, options); //decode sensitive data
+      request = await bluebox.blueboxReplacer(isDecodeMode, request); //decode sensitive data
       
-      await rp(options)
+      await sendRequest(request)
       .then(response => {
-        console.log(response)
         resolve(response);
       }).catch(err => {
-        console.log(err)
         if(typeof err.response !== 'undefined') {
           reject(err.response);
         } else {
