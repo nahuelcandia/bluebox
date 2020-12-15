@@ -67,15 +67,6 @@ async function cypher(action, value, ttl, type) {
     }
 }
 
-const extractFirstPart = (code) => {
-	const chunk = code.match(/\w+bx_/g)[0]
-	return chunk.substring(0, chunk.length-3)
-}
-const extractLastPart = (code) => {
-	const chunk = code.match(/\_bx\w+/g)[0]
-	return chunk.substr(3)
-}
-
 async function getMiddleDigits(cardNumber) {
     //Gets everything but the first 6 and last 4 digits.
     return cardNumber.substring(6, cardNumber.length-4);
