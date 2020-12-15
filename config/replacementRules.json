@@ -1,27 +1,37 @@
 [
     {
         "attributeName": "card_number",
-        "regex": null,
+        "type": "PAN",
+        "ttl": null
+    },
+    {
+        "attributeName": "cardNumber",
+        "type": "PAN",
+        "ttl": null
+    },
+    {
+        "attributeName": "PAN",
+        "type": "PAN",
         "ttl": null
     },
     {
         "attributeName": "cvv",
-        "regex": null,
+        "type": "CVV",
         "ttl": 3600
     },
     {
         "attributeName": "cvc",
-        "regex": null,
+        "type": "CVV",
         "ttl": 3600
     },
     {
         "attributeName": "security_code",
-        "regex": null,
+        "type": "CVV",
         "ttl": 3600
     },
     {
         "attributeName": "cvv2",
-        "regex": null,
+        "type": "CVV",
         "ttl": 3600
     }
 ]
