@@ -52,17 +52,13 @@ async function cypher(action, value, ttl, type) {
         } else {
             value = (type === 'PAN')? value.replace(/\D/g, '') : value; //remove spaces and - if PAN
             let valueToEncrypt = (type === 'PAN')? await getMiddleDigits(value) : value;
-            console.log(valueToEncrypt)
             ttl = (type === 'CVV' && !ttl)? 3600 : ttl; //If the value to encode is a CVV type, but TTL is not defined it will save it with 3h expiration by default.
             let encodedValue = await encodeSensibleData(valueToEncrypt); //value is the raw data
             let alias = await saveInDb(encodedValue, ttl); //return alias
-            console.log(alias)
             alias = (type === 'PAN')? value.replace(valueToEncrypt, alias) : alias; //if has a type returns the request as is, replacing the sensitive part.
-            console.log('--->'+alias)
             return alias
         }
     } catch (error) {
-        console.log(error)
         throw error
     }
 }
