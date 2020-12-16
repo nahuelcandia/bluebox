@@ -2,7 +2,11 @@ service:
   name: bluebox
 
 custom:
-  domain: "bluebox.rebill.to"
+  customDomain:
+    domainName: 'api.yourdomain.com'
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 #  vpc:
 #    staging:
 #      securityGroupIds: []
@@ -47,23 +51,25 @@ custom:
     services:
       - kms
       - secretsmanager
-    exportOutputs: false
-  associateWaf:
-    name: BlueboxWaf
-    version: Regional #(optional) Regional | V2
+    exportOutputs: true
+  #associateWaf:
+    #name: BlueboxWaf
+    #version: Regional #(optional) Regional | V2
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-vpc-plugin
-  - serverless-associate-waf
-  - serverless-plugin-custom-domain
+  #- serverless-associate-waf
+  - serverless-domain-manager
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
   stage: ${opt:stage, 'staging'}
   region: ${self:custom.region.${opt:stage, self:provider.stage}}
   runtime: nodejs12.x
-  timeout: 60
+  timeout: 30
+  memorySize: 1769 # equivalent to 1vCPU
   #vpc: ${self:custom.vpc.${opt:stage, self:provider.stage}}
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
@@ -76,7 +82,18 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:CreateTable
+        - dynamodb:DescribeTable
+        - dynamodb:UpdateTable
+        - dynamodb:DescribeTimeToLive
+        - dynamodb:UpdateTimeToLive
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: Allow
+      Action:
+        - kms:Encrypt
+        - kms:Decrypt
+        - kms:GenerateDataKey
+      Resource: ${env:KMS_CMK_KEYID}
 
 functions:
   blueboxInboundProxy:
@@ -85,63 +102,14 @@ functions:
       - http:
           method: 'any'
           path: '/' # Catch all unknown routes and redirect to main handler
-          cors: true
+          cors:
+            origin: '*'
+            headers: '*'
+            allowCredentials: true
       - http:
           method: 'any'
           path: '/{any+}' # Catch all unknown routes and redirect to main handler
-          cors: true
-resources:
-  Resources:
-    BlueboxDynamoDbTable:
-      Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Delete #Retain
-      Properties:
-        TableName: 'bluebox'
-        AttributeDefinitions: 
-          - AttributeName: "alias"
-            AttributeType: "S"
-          - AttributeName: "value"
-            AttributeType: "S"
-          - AttributeName: "ttl"
-            AttributeType: "N"
-          - AttributeName: "updatedAt"
-            AttributeType: "N"
-          - AttributeName: "createdAt"
-            AttributeType: "N"
-        KeySchema: 
-          - AttributeName: "alias"
-            KeyType: "HASH"
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-        SSESpecification:
-          SSEEnabled: true
-          SSEType: 'KMS'
-        TimeToLiveSpecification:
-          AttributeName: "ttl"
-          Enabled: true
-    CMKey: 
-      Type: AWS::KMS::Key
-      Properties: 
-        Description: 'Bluebox CMK for DynamoDb'
-        Enabled: true
-        EnableKeyRotation: true
-        KeyPolicy:
-          Version: 2012-10-17
-          Id: key-default-1
-          Statement:
-            - Sid: Bluebox IAM
-              Effect: Allow
-              Principal:
-                AWS: !Join 
-                  - ''
-                  - - 'arn:aws:iam::'
-                    - !Ref 'AWS::AccountId'
-                    - ':root'
-              Action: 'kms:*'
-              Resource: '*'
-    KeyAlias:
-      Type: 'AWS::KMS::Alias'
-      Properties:
-        AliasName: !Sub 'alias/${self:service.name}'
-        TargetKeyId: !Ref CMKey
+          cors:
+            origin: '*'
+            headers: '*'
+            allowCredentials: true

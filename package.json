@@ -32,8 +32,10 @@
     },
     "devDependencies": {
         "lerna": "^3.20.2",
-        "serverless": "^1.67.3",
+        "serverless": "^2.15.0",
         "serverless-associate-waf": "^1.2.1",
+        "serverless-domain-manager": "^5.1.0",
+        "serverless-dotenv-plugin": "^3.1.0",
         "serverless-dynamodb-local": "^0.2.18",
         "serverless-offline": "^6.1.4"
     }
