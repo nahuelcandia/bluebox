@@ -81,7 +81,7 @@ const keyring = new KmsKeyringNode({ generatorKeyId, keyIds })
 */
 const context = {
     stage: process.env.NODE_ENV,
-    origin: process.env.KMS_REGION
+    origin: process.env.AWSREGION
 }
   
 module.exports.encodeSensibleData = async function(cleartext) {

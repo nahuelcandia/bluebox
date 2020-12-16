@@ -1,33 +1,42 @@
 const dynamoose = require("dynamoose");
 const { v4: uuidv4 } = require('uuid');
 
-const ddb = new dynamoose.aws.sdk.DynamoDB({
-  "accessKeyId": process.env.DB_ACCESSKEYID,
-  "secretAccessKey": process.env.DB_SECRETACCESSKEY,
-  "region": process.env.DB_REGION
-});
-
-if(process.env.NODE_ENV === 'dev') {
-  dynamoose.aws.ddb.local();
-} else {
-  dynamoose.aws.ddb.set(ddb);
+try {
+  const ddb = new dynamoose.aws.sdk.DynamoDB({
+    // Lambda executes within roles, so it does not require keys.
+    //"accessKeyId": process.env.DB_ACCESSKEYID,
+    //"secretAccessKey": process.env.DB_SECRETACCESSKEY,
+    "region": process.env.AWSREGION
+  });
+  
+  if(process.env.NODE_ENV === 'dev') {
+    dynamoose.aws.ddb.local();
+  } else {
+    dynamoose.aws.ddb.set(ddb);
+  }
+} catch(error) {
+  console.log(error)
+  throw error
 }
 
-const blueboxData = dynamoose.model("bluebox", new dynamoose.Schema({
-    "alias": {
-      "type": String,
-      "hashKey": true
-    }, 
-    "value": String, 
-    "ttl": Date,
-    "updatedAt": Date, 
-    "createdAt": Date
-  }), { 
-    "saveUnknown": false,
-    "timestamps": true,
-    "create": true
-});
-
+const blueboxData = dynamoose.model('bluebox-'+process.env.NODE_ENV, new dynamoose.Schema({
+  "alias": {
+    "type": String,
+    "hashKey": true
+  }, 
+  "value": String, 
+  "ttl": Date,
+  "updatedAt": Date, 
+  "createdAt": Date
+}), { 
+  "saveUnknown": false,
+  "timestamps": true,
+  "create": true,
+  "serverSideEncryption": true,
+  "expires": {
+    "attribute": 'ttl'
+  }
+});  
 
 module.exports.saveInDb = async function(encryptedData, ttl) {
   return new Promise(async function(resolve, reject) {

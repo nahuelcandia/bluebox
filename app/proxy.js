@@ -30,18 +30,22 @@ exports.redirectRequest = async function (req, res) {
         });
 
         await forwardRequest(req, proxyTarget, true).then(response => {
-          res.send(response);
+          let statusCode = (response.statusCode)? response.statusCode : 200;
+          res.status(statusCode).send(response);
         }).catch(error => {
-          res.send(error);
+          let statusCode = (error.statusCode)? error.statusCode : 500;
+          res.status(statusCode).send(error);
         });
       } else {
         res.status(401).send({"message": "Bluebox access denied."})
       }
     } else {
       await forwardRequest(req, proxyTarget, false).then(response => {
-        res.send(response);
+        let statusCode = (response.statusCode)? response.statusCode : 200;
+        res.status(statusCode).send(response);
       }).catch(error => {
-        res.send(error);
+        let statusCode = (error.statusCode)? error.statusCode : 500;
+        res.status(statusCode).send(error);
       });
     }
   } catch (err) {
@@ -81,6 +85,16 @@ async function getHeaderProxyTarget(headers, path) {
   });
 }
 
+async function redirectOn302(body, response, resolveWithFullResponse) {
+  if (response.statusCode === 302) {
+    request.url = response.request.uri.href;
+    let newResponse = await sendRequest(request);
+    return newResponse.body
+  } else {
+    return resolveWithFullResponse ? response.body : body;
+  }
+}
+
 async function forwardRequest(req, proxyTarget, isDecodeMode) {
   return new Promise(async function(resolve, reject) {
     try {
@@ -88,13 +102,14 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       delete req.headers['content-length'];
       delete req.headers['x-bluebox-authorization'];
       delete req.headers['x-bluebox-forward-to'];
-
+      
       let request = {
         url: proxyTarget,
         method: req.method,
         json: true,
         headers: req.headers,
-        followAllRedirects: true
+        followAllRedirects: true,
+        transform: redirectOn302
       }
     
       //Intercept and forward the querystrings
@@ -118,6 +133,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       .then(response => {
         resolve(response);
       }).catch(err => {
+        console.log(err);
         if(typeof err.response !== 'undefined') {
           reject(err.response);
         } else {
@@ -125,6 +141,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
         }
       });
     } catch(e) {
+      console.log(e);
       reject(e);
     }
   });
