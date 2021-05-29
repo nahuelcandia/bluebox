@@ -40,7 +40,7 @@ The inbound/reverse proxy directs traffic between the client-side (inbound) traf
 and your backend systems. When you send a request out of your service (Outbound), the Bluebox will intercept and replace the aliases by its original value and
 send it forth to the original endpoint, as illustrated by the below image.
 
-![layout](https://raw.github.com/nahuelcandia/bluebox/master/docs/assets/bluebox-flow.png)
+![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.png?raw=true)
 
 ## Getting Started
 
