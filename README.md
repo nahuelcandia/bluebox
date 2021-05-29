@@ -40,7 +40,7 @@ The inbound/reverse proxy directs traffic between the client-side (inbound) traf
 and your backend systems. When you send a request out of your service (Outbound), the Bluebox will intercept and replace the aliases by its original value and
 send it forth to the original endpoint, as illustrated by the below image.
 
-![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.png?raw=true)
+![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/flow-chart.jpeg?raw=true)
 
 ## Getting Started
 
@@ -63,13 +63,10 @@ serverless offline start
 - DynamoDB
 
 ## AWS Services Required
-The core AWS components used by this Quick Start include the following AWS services. (If
-you are new to AWS, see Getting Started with AWS.)
-
+The core AWS components used by this Quick Start include the following AWS services.
 
 - AWS Lambda: encrypts the information, saves it into DynamoDB and replaces it by aliases.
 - DynamoDB: stores the sensitive data encrypted.
-- Inspector [TBD]: Automated security assessment service to help improve the security and compliance of applications deployed on AWS.
 - AWS CloudTrail – AWS CloudTrail records AWS API calls and delivers log files that
 include caller identity, time, source IP address, request parameters, and response 
 Amazon Web Services – Standardized Architecture for PCI DSS January 2020. 
@@ -105,11 +102,6 @@ AWS services and other resources in a virtual network that you define. You have
 complete control over your virtual networking environment, including selection of your
 own IP address range, creation of subnets, and configuration of route tables and
 network gateways.
-- AWS WAF - AWS WAF is a web application firewall that helps protect web applications
-from attacks by allowing you to configure rules that allow, block, or monitor (count) web
-requests based on conditions that you define. These conditions include IP addresses,
-HTTP headers, HTTP body, URI strings, structured query language (SQL) injection and
-cross-site scripting.
 
 ### AWS Total Cost of Ownership (TCO)
 
@@ -141,6 +133,10 @@ Amount of Records | TCO
 1,000,000 | $1 
 
 ## Architecture Diagram
+
+![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.jpeg?raw=true)
+## Extra Resources
+
 - https://aws.amazon.com/blogs/database/applying-best-practices-for-securing-sensitive-data-in-amazon-dynamodb/
 - https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/kms_simple.ts
 - https://github.com/aws/aws-encryption-sdk-javascript/blob/master/modules/example-node/src/caching_cmm.ts
