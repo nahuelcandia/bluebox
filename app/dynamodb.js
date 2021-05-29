@@ -19,7 +19,7 @@ try {
   throw error
 }
 
-const blueboxData = dynamoose.model('bluebox-'+process.env.NODE_ENV, new dynamoose.Schema({
+const blueboxData = dynamoose.model('bluebox_'+process.env.NODE_ENV, new dynamoose.Schema({
   "alias": {
     "type": String,
     "hashKey": true
@@ -31,11 +31,8 @@ const blueboxData = dynamoose.model('bluebox-'+process.env.NODE_ENV, new dynamoo
 }), { 
   "saveUnknown": false,
   "timestamps": true,
-  "create": true,
-  "serverSideEncryption": true,
-  "expires": {
-    "attribute": 'ttl'
-  }
+  "create": false,
+  "serverSideEncryption": true
 });  
 
 module.exports.saveInDb = async function(encryptedData, ttl) {
@@ -50,7 +47,7 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
       //convert ttl from seconds to ms and add to current time, then convert in epoch time format as required by DynamoDB
       if(ttl) inputData.ttl = Math.floor(new Date().getTime() + (ttl*1000));
       const document = new blueboxData(inputData);
-      document.save().catch(error => { console.log(error); reject(error); });
+      await document.save().catch(error => { console.log(error); reject(error); });
       resolve(inputData.alias);
     } catch(e) {
       console.log(e);

@@ -7,7 +7,7 @@
     "license": "MIT",
     "main": "bluebox.handler.js",
     "scripts": {
-        "deploy": "serverless deploy -s ${ENVIRONMENT}",
+        "deploy": "serverless deploy -s ${ENVIRONMENT} --force --verbose",
         "test": "npx jest --config jest.config.json"
     },
     "dependencies": {
@@ -18,12 +18,14 @@
         "body-parser": "^1.19.0",
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",
-        "dotenv": "^8.2.0",
         "dynamoose": "^2.4.0",
         "express": "^4.17.1",
+        "form-data": "^2.3.3",
         "moment": "^2.24.0",
         "morgan": "^1.10.0",
+        "multer": "^1.4.2",
         "node-uuid": "^1.4.8",
+        "request": "^2.88.2",
         "request-promise": "^4.2.6",
         "serverless-http": "^2.6.0",
         "serverless-plugin-custom-domain": "^2.0.4",
@@ -32,11 +34,13 @@
     },
     "devDependencies": {
         "lerna": "^3.20.2",
-        "serverless": "^2.15.0",
+        "serverless": "^2.16.0",
+        "serverless-apigw-binary": "^0.4.4",
         "serverless-associate-waf": "^1.2.1",
         "serverless-domain-manager": "^5.1.0",
         "serverless-dotenv-plugin": "^3.1.0",
         "serverless-dynamodb-local": "^0.2.18",
-        "serverless-offline": "^6.1.4"
+        "serverless-offline": "^6.8.0",
+        "serverless-offline-ssm": "^5.2.0"
     }
 }

@@ -1,8 +1,9 @@
 const sendRequest = require('request-promise');
 const bluebox = require('./bluebox');
 const authorizer = require('./authorizer');
+const FormData = require('form-data');
 
-exports.redirectRequest = async function (req, res) {
+exports.redirectRequest = async function (req, res, next) {
   try {
     // When access is granted to the Bluebox, it automatically acts as a Decoder of the sensible data.
     // The request will be forwarded to the url defined in the header X-Bluebox-Forward-To
@@ -25,7 +26,6 @@ exports.redirectRequest = async function (req, res) {
         await getHeaderProxyTarget(req.headers, req.path).then(response => {
           proxyTarget = response;
         }).catch(error => {
-          console.log(error)
           res.send(error);
         });
 
@@ -49,7 +49,6 @@ exports.redirectRequest = async function (req, res) {
       });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({'error': err});
   }
 }
@@ -79,20 +78,9 @@ async function getHeaderProxyTarget(headers, path) {
         reject({"message": "Invalid x-bluebox-forward-to header. Please set a proxy target."});
       }
     } catch(e) {
-      console.log(e);
       reject(e);
     }
   });
-}
-
-async function redirectOn302(body, response, resolveWithFullResponse) {
-  if (response.statusCode === 302) {
-    request.url = response.request.uri.href;
-    let newResponse = await sendRequest(request);
-    return newResponse.body
-  } else {
-    return resolveWithFullResponse ? response.body : body;
-  }
 }
 
 async function forwardRequest(req, proxyTarget, isDecodeMode) {
@@ -102,6 +90,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       delete req.headers['content-length'];
       delete req.headers['x-bluebox-authorization'];
       delete req.headers['x-bluebox-forward-to'];
+      req.headers['Accept-Encoding'] = '';
       
       let request = {
         url: proxyTarget,
@@ -109,7 +98,16 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
         json: true,
         headers: req.headers,
         followAllRedirects: true,
-        transform: redirectOn302
+        transform: async (body, response, resolveWithFullResponse) => {
+          if (response.statusCode === 302) {
+            request = response.request;
+            request.url = response.request.uri.href;
+            let newResponse = await sendRequest(request);
+            return newResponse.body
+          } else {
+            return resolveWithFullResponse ? response.body : body;
+          }
+        }
       }
     
       //Intercept and forward the querystrings
@@ -121,19 +119,35 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       if(typeof req.params !== 'undefined' && req.params != null && isEmpty(req.params) == false){
         request['url'] = await urlParamsFiller(request['url'], req.params);
       }
-    
+
       //Intercept and forward the request body
-      if(typeof req.body !== 'undefined' && req.body != null && isEmpty(req.body) == false) {
-        request['body'] = req.body;
+      if(typeof req.body !== 'undefined') {
+        if(typeof req.headers['content-type'] !== 'undefined' && req.headers['content-type'].includes('multipart/form-data')) {
+          request['formData'] = {};
+          for (let i = 0; i < req.files.length; i++) {
+            const { fieldname, buffer: value, originalname: filename, mimetype: contentType } = req.files[i];
+            request.formData[fieldname] = {
+              value,
+              options: {
+                  filename,
+                  contentType
+              }
+            };
+          }
+        } else if(req.body != null && isEmpty(req.body) == false) {
+          console.log('trueee')
+          request['body'] = req.body;
+        }
       }
+
+      request['headers']['content-type'] = (req.headers['content-type'])? req.headers['content-type'] :  'application/json';
     
       request = await bluebox.blueboxReplacer(isDecodeMode, request); //decode sensitive data
-      
+
       await sendRequest(request)
       .then(response => {
         resolve(response);
       }).catch(err => {
-        console.log(err);
         if(typeof err.response !== 'undefined') {
           reject(err.response);
         } else {
@@ -141,7 +155,7 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
         }
       });
     } catch(e) {
-      console.log(e);
+      console.log(e)
       reject(e);
     }
   });
