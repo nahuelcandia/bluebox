@@ -84,7 +84,7 @@ const context = {
     origin: process.env.AWSREGION
 }
   
-module.exports.encodeSensibleData = async function(cleartext) {
+const encodeSensibleData = async function(cleartext) {
     return new Promise(async function(resolve, reject) {
         try {
             /* Encrypt the data. */
@@ -100,7 +100,7 @@ module.exports.encodeSensibleData = async function(cleartext) {
     });
 }
 
-module.exports.decodeSensibleData = async function(data) { 
+const decodeSensibleData = async function(data) { 
     return new Promise(async function(resolve, reject) {
         try {
             /* Decrypt the data. */
@@ -127,4 +127,9 @@ module.exports.decodeSensibleData = async function(data) {
             reject(error);
         }
     });
+}
+
+module.exports = {
+    encodeSensibleData,
+    decodeSensibleData
 }

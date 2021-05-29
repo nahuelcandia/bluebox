@@ -35,7 +35,7 @@ const blueboxData = dynamoose.model('bluebox_'+process.env.NODE_ENV, new dynamoo
   "serverSideEncryption": true
 });  
 
-module.exports.saveInDb = async function(encryptedData, ttl) {
+const saveInDb = async function(encryptedData, ttl) {
   return new Promise(async function(resolve, reject) {
     try {
       let inputData = {
@@ -56,7 +56,7 @@ module.exports.saveInDb = async function(encryptedData, ttl) {
   });
 }
 
-module.exports.getFromDb = async function(alias) {
+const getFromDb = async function(alias) {
   return new Promise(async function(resolve, reject) {
     try {
       let response = await blueboxData.query("alias").eq(alias).attributes(["value"]).limit(1).exec();
@@ -66,4 +66,9 @@ module.exports.getFromDb = async function(alias) {
       reject(e);
     }
   });
+}
+
+module.exports = {
+  saveInDb,
+  getFromDb
 }

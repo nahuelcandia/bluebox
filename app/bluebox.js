@@ -3,7 +3,7 @@ const replacementRules = require("../config/replacementRules.json");
 const { encodeSensibleData, decodeSensibleData } = require("./cypher");
 const { saveInDb, getFromDb } = require("./dynamodb");
 
-exports.blueboxReplacer = async function (cypherAction, request) {
+const blueboxReplacer = async function (cypherAction, request) {
     // Searches for parameters to replace in the data
     // based on the config/replacementRules.json
     // for each item found it will encrypt or decrypt the data.
@@ -23,7 +23,7 @@ exports.blueboxReplacer = async function (cypherAction, request) {
     });
 }
 
-async function replaceAndCypher(request, ruleAttributeName, cypherAction, ttl, type){
+const replaceAndCypher = async function (request, ruleAttributeName, cypherAction, ttl, type){
     return new Promise(async function(resolve, reject) {
         try {
             for(var property in request){
@@ -41,7 +41,7 @@ async function replaceAndCypher(request, ruleAttributeName, cypherAction, ttl, t
     });
 }
 
-async function cypher(action, value, ttl, type) {
+const cypher = async function (action, value, ttl, type) {
     try {
         if(action) {
             let alias = value.match(/bx_\w+_bx/g)[0];
@@ -63,7 +63,11 @@ async function cypher(action, value, ttl, type) {
     }
 }
 
-async function getMiddleDigits(cardNumber) {
+const getMiddleDigits = async function (cardNumber) {
     //Gets everything but the first 6 and last 4 digits.
     return cardNumber.substring(6, cardNumber.length-4);
+}
+
+module.exports = {
+    blueboxReplacer
 }

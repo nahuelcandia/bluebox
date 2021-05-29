@@ -1,9 +1,8 @@
 const sendRequest = require('request-promise');
 const bluebox = require('./bluebox');
 const authorizer = require('./authorizer');
-const FormData = require('form-data');
 
-exports.redirectRequest = async function (req, res, next) {
+const redirectRequest = async function (req, res, next) {
   try {
     // When access is granted to the Bluebox, it automatically acts as a Decoder of the sensible data.
     // The request will be forwarded to the url defined in the header X-Bluebox-Forward-To
@@ -53,7 +52,6 @@ exports.redirectRequest = async function (req, res, next) {
   }
 }
 
-
 function isEmpty(obj) {
   if(!Object.keys(obj).length > 0) {
     return true;
@@ -62,14 +60,14 @@ function isEmpty(obj) {
   }
 }
 
-async function urlParamsFiller(string, params)  {
+const urlParamsFiller = async function (string, params)  {
   for (const param of Object.keys(params)) {
     string = string.replace(`:${param}`, params[param]);
   }
   return string;
 }
 
-async function getHeaderProxyTarget(headers, path) {
+const getHeaderProxyTarget = async function (headers, path) {
   return new Promise(function(resolve, reject) {
     try {
       if(typeof headers['x-bluebox-forward-to'] !== 'undefined' && headers['x-bluebox-forward-to'] != null) {
@@ -83,7 +81,7 @@ async function getHeaderProxyTarget(headers, path) {
   });
 }
 
-async function forwardRequest(req, proxyTarget, isDecodeMode) {
+const forwardRequest = async function (req, proxyTarget, isDecodeMode) {
   return new Promise(async function(resolve, reject) {
     try {
       delete req.headers.host;
@@ -159,4 +157,8 @@ async function forwardRequest(req, proxyTarget, isDecodeMode) {
       reject(e);
     }
   });
+}
+
+module.exports = {
+  redirectRequest
 }

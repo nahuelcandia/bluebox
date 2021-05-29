@@ -1,6 +1,6 @@
 'use strict';
 
-exports.authorizeAccess = async function (credentials) {
+const authorizeAccess = async function (credentials) {
     try {
         if(credentials === process.env.BLUEBOX_TOKEN) {
             return true
@@ -10,4 +10,8 @@ exports.authorizeAccess = async function (credentials) {
     } catch(e) {
         return e
     }
+}
+
+module.exports = {
+    authorizeAccess
 }
