@@ -93,6 +93,7 @@ provider:
         - kms:Encrypt
         - kms:Decrypt
         - kms:GenerateDataKey
+        - lambda:InvokeFunction
       Resource: ${env:KMS_CMK_KEYID}
 
 functions:
@@ -113,3 +114,25 @@ functions:
             origin: '*'
             headers: '*'
             allowCredentials: true
+resources:
+  Resources:
+    BlueboxDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: 'bluebox_${self:provider.stage}'
+        AttributeDefinitions: 
+          - AttributeName: "alias"
+            AttributeType: "S"
+        KeySchema: 
+          - AttributeName: "alias"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        SSESpecification:
+          SSEEnabled: true
+          SSEType: 'KMS'
+        TimeToLiveSpecification:
+          AttributeName: "ttl"
+          Enabled: true
