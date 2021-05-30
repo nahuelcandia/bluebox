@@ -1,4 +1,5 @@
-# Bluebox
+![BLUEBOX](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/logo-color.png?raw=true)
+# About
 
 Open Source PCI-Compliant Serverless Proxy and "Blackbox" that replaces sensitive information on-the-fly for inbound and outbound traffic.
 
@@ -134,7 +135,7 @@ Amount of Records | TCO
 
 ## Architecture Diagram
 
-![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.jpeg?raw=true)
+![architecture](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.jpeg?raw=true)
 ## Extra Resources
 
 - https://aws.amazon.com/blogs/database/applying-best-practices-for-securing-sensitive-data-in-amazon-dynamodb/
