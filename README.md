@@ -1,8 +1,10 @@
+
 [<img src="https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/logo-color.png?raw=true" width="350"/>](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/logo-color.png?raw=true)
 
+Collect, Store and Exchange sensitive information.
 # About
 
-Open Source PCI-Compliant Serverless Proxy and "Blackbox" that replaces sensitive information on-the-fly for inbound and outbound traffic.
+Bluebox is an Open Source PCI-Compliant Serverless Proxy and "Blackbox" that replaces sensitive information on-the-fly for inbound and outbound traffic.
 
 This standalone quickstart module aims to simplify the process of becoming PCI-DSS compliant,
 by handling any sensible data in an isolated system, physically and logically
