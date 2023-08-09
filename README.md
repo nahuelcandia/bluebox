@@ -161,6 +161,6 @@ Please see our contributing.md.
 
 - Nahuel Candia ([@nahuelcandia](https://twitter.com/dncandia))
 - Sam Chalela ([@breakingbuilds](https://twitter.com/breakingbuilds))
-- Ruben Maier Enzler ([@breakingbuilds](https://github.com/RubenMaier))
+- Ruben Maier Enzler ([@RubenMaier](https://github.com/RubenMaier))
 
 [Rebill](https://www.rebill.to)
