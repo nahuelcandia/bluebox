@@ -1,4 +1,4 @@
-[<img src="https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/logo-color.png?raw=true" width="350"/>](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/logo-color.png?raw=true)
+[<img src="https://github.com/nahuelcandia/bluebox/blob/main/docs/assets/img/logo-color.png?raw=true" width="350"/>](https://github.com/nahuelcandia/bluebox/blob/main/docs/assets/img/logo-color.png?raw=true)
 
 Collect, Store and Exchange sensitive information.
 
@@ -44,7 +44,7 @@ The inbound/reverse proxy directs traffic between the client-side (inbound) traf
 and your backend systems. When you send a request out of your service (Outbound), the Bluebox will intercept and replace the aliases by its original value and
 send it forth to the original endpoint, as illustrated by the below image.
 
-![layout](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/flow-chart.jpeg?raw=true)
+![layout](https://github.com/nahuelcandia/bluebox/blob/main/docs/assets/img/flow-chart.jpeg?raw=true)
 
 ## Prerequisites
 
@@ -145,7 +145,7 @@ The calculation is based on the amount of requests, taking in account that stori
 
 ## Architecture Diagram
 
-![architecture](https://github.com/nahuelcandia/bluebox/blob/master/docs/assets/img/architecture.jpeg?raw=true)
+![architecture](https://github.com/nahuelcandia/bluebox/blob/main/docs/assets/img/architecture.jpeg?raw=true)
 
 ## Extra Resources
 
@@ -161,5 +161,6 @@ Please see our contributing.md.
 
 Nahuel Candia ([@nahuelcandia](https://twitter.com/dncandia))
 Sam Chalela ([@breakingbuilds](https://twitter.com/breakingbuilds))
+Ruben Maier Enzler ([@breakingbuilds](https://github.com/RubenMaier))
 
-[Rebill, Inc.](https://www.rebill.to)
+[Rebill](https://www.rebill.to)
