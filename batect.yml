@@ -1,0 +1,71 @@
+containers:
+  build-env:
+    image: node:16.13.2-alpine3.14
+    volumes:
+      - local: .
+        container: /code
+    working_directory: /code
+    enable_init_process: true
+
+  localstack:
+    image: localstack/localstack
+    privileged: true
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: dynamodb, serverless, cloudformation, lambda, kms
+      LAMBDA_REMOVE_CONTAINERS: true
+    volumes:
+      - .batect/infra/aws/init/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  mirror:
+    build_directory: .batect/mirror
+    working_directory: /app
+    ports:
+      - "9000:9000"
+
+tasks:
+  setup:
+    description: Install dependencies needed to build and run the application
+    run:
+      container: build-env
+      command: npm install
+
+  build:
+    description: Builds the application
+    prerequisites:
+      - setup
+    run:
+      container: build-env
+      command: npm build
+
+  e2e:
+    description: Builds the application
+    dependencies:
+      - localstack
+      - mirror
+    run:
+      container: build-env
+      command: npm run e2e
+      environment:
+        NODE_ENV: dev
+        PROXY_TARGET: http://mirror:9000
+        X_ORIGIN_VERIFY: some-secret
+        AWS_ACCESS_KEY_ID: default_access_key
+        AWS_SECRET_ACCESS_KEY: default_secret_key
+        AWS_DEFAULT_REGION: us-east-1
+      ports:
+        - "8081:8081"
+        - "8082:8082"
+
+  test:
+    description: Runs the application
+    run:
+      container: build-env
+      command: npm test
+      environment:
+        NODE_ENV: test
+      ports:
+        - local: 8000
+          container: 8000

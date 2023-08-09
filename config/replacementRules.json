@@ -1,5 +1,10 @@
 [
     {
+        "attributeName": "card.number",
+        "type": "PAN",
+        "ttl": null
+    },
+    {
         "attributeName": "card_number",
         "type": "PAN",
         "ttl": null
@@ -26,6 +31,11 @@
     },
     {
         "attributeName": "security_code",
+        "type": "CVV",
+        "ttl": 3600
+    },
+    {
+        "attributeName": "securityCode",
         "type": "CVV",
         "ttl": 3600
     },

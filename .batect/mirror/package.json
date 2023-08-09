@@ -1,0 +1,7 @@
+{
+  "name": "mirror",
+  "packageManager": "yarn@3.2.0",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}

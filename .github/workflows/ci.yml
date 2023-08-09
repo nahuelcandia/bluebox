@@ -1,0 +1,17 @@
+name: CI for Rebill Bluebox
+
+on: push
+
+jobs:
+  test:
+    name: "Build and test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install
+        run: ./batect setup
+      - name: Unit tests
+        run: ./batect test
+      - name: Integration tests
+        run: ./batect e2e
