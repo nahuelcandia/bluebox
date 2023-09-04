@@ -14,7 +14,7 @@
         "@aws-crypto/client-node": "4.0.0",
         "@types/body-parser": "^1.19.2",
         "@types/qs": "^6.9.7",
-        "aws-sdk": "^2.1431.0",
+        "aws-sdk": "^2.1450.0",
         "axios": "1.4.0",
         "body-parser": "1.20.2",
         "cookie-parser": "1.4.6",
