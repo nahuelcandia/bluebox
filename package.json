@@ -26,7 +26,7 @@
         "morgan": "1.10.0",
         "multer": "1.4.5-lts.1",
         "serverless-http": "3.2.0",
-        "uuid": "9.0.0",
+        "uuid": "9.0.1",
         "webpack": "5.88.2"
     },
     "devDependencies": {
@@ -36,7 +36,7 @@
         "@types/jest": "29.5.3",
         "@types/multer": "1.4.7",
         "@types/supertest": "2.0.12",
-        "@types/uuid": "9.0.2",
+        "@types/uuid": "9.0.4",
         "jest": "29.6.2",
         "localstack": "1.0.0",
         "supertest": "6.3.3",
